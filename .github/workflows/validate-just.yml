@@ -1,0 +1,28 @@
+name: Validate Justfiles
+
+on:
+  pull_request:
+    paths:
+      - "Justfile"
+      - "just/*"
+  push:
+    branches:
+      - main
+    paths:
+      - "Justfile"
+      - "just/*"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Setup Just
+        uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3
+
+      - name: Check Just Syntax
+        shell: bash
+        run: |
+          just check

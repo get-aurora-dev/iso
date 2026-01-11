@@ -1,0 +1,38 @@
+# Build artifacts
+output/
+*.iso
+*.iso-CHECKSUM
+*_build*
+
+# Cloned repositories
+common/
+
+# Temporary files
+*.log
+*.tmp
+flatpaks.list
+previous.manifest.json
+changelog.md
+output.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+venv/
+env/
+
+# Just
+.just/

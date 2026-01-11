@@ -1,0 +1,19 @@
+name: Build Stable ISOs
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/build-iso-stable.yml"
+      - ".github/workflows/reusable-build-iso-anaconda-webui.yml"
+      - "iso_files/**"
+  schedule:
+    - cron: "0 2 1 * *" # First day of each month at 2:00 AM UTC
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build-iso-stable:
+    name: Build Stable ISOs
+    uses: ./.github/workflows/reusable-build-iso-anaconda-webui.yml
+    secrets: inherit
