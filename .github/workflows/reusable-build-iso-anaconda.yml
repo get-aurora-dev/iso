@@ -1,6 +1,5 @@
 ---
 name: Build ISOs (Live with Webui)
-
 on:
   workflow_dispatch:
   pull_request:
