@@ -26,10 +26,10 @@ This document provides essential information for coding agents working with the 
 
 - `.github/workflows/` - GitHub Actions workflows for ISO building
   - `build-iso-stable.yml` - Caller workflow for stable variant
-  - `reusable-build-iso-anaconda-webui.yml` - Main ISO build workflow with matrix strategy
+  - `reusable-build-iso-anaconda.yml` - Main ISO build workflow with matrix strategy
   - `validate-just.yml` - Validates Justfile syntax
 - `iso_files/` - ISO configuration and customization scripts
-  - `configure_iso_anaconda-webui.sh` - Main ISO configuration script
+  - `configure_iso_anaconda.sh` - Main ISO configuration script
   - `scope_installer.png` - Aurora installer icon/branding
 
 ### Architecture
@@ -139,7 +139,7 @@ just check
 just test-iso-config
 
 # Manual check
-bash -n iso_files/configure_iso_anaconda-webui.sh
+bash -n iso_files/configure_iso_anaconda.sh
 ```
 
 **ISO build failures:**
@@ -167,7 +167,7 @@ The repository uses mandatory pre-commit validation:
 
 - `build-iso-stable.yml` - Builds stable ISO images (calls reusable workflow)
   - Triggers on: PR (when ISO files change), monthly schedule, workflow dispatch
-- `reusable-build-iso-anaconda-webui.yml` - Core ISO build logic with matrix strategy
+- `reusable-build-iso-anaconda.yml` - Core ISO build logic with matrix strategy
   - Builds multiple flavor combinations in parallel
   - Uses Titanoboa for ISO generation
   - Uploads to CloudFlare R2 (stable) or GitHub artifacts (PRs)
@@ -180,7 +180,7 @@ The repository uses mandatory pre-commit validation:
 - Supports workflow dispatch for manual builds
 - Automatically builds on ISO configuration changes
 - ISO builds use Titanoboa action from `ublue-os/titanoboa`
-- Configuration happens in `configure_iso_anaconda-webui.sh`
+- Configuration happens in `configure_iso_anaconda.sh`
 - Flatpaks are dynamically generated from Brewfiles in `get-aurora-dev/common` repository
 - ISOs are uploaded to CloudFlare R2 for distribution (stable releases only)
 
@@ -196,7 +196,7 @@ The repository uses mandatory pre-commit validation:
 
 ### Main Configuration Script
 
-The ISO is customized via `iso_files/configure_iso_anaconda-webui.sh`:
+The ISO is customized via `iso_files/configure_iso_anaconda.sh`:
 
 **Key Customizations:**
 - Installs Anaconda WebUI installer (anaconda-webui, anaconda-live, firefox)
@@ -210,7 +210,7 @@ The ISO is customized via `iso_files/configure_iso_anaconda-webui.sh`:
 
 **Making Configuration Changes:**
 
-1. Edit `iso_files/configure_iso_anaconda-webui.sh`
+1. Edit `iso_files/configure_iso_anaconda.sh`
 2. Validate syntax: `just test-iso-config`
 3. Run pre-commit hooks: `pre-commit run --all-files`
 4. Test in PR to trigger ISO build via GitHub Actions
@@ -280,7 +280,7 @@ tags: stable, latest
 
 ### GitHub Actions Workflow
 
-The `reusable-build-iso-anaconda-webui.yml` workflow:
+The `reusable-build-iso-anaconda.yml` workflow:
 
 1. **Maximizes build space** - Removes unnecessary software (amd64 only)
 2. **Validates Just syntax** - Ensures build recipes are valid
@@ -293,7 +293,7 @@ The `reusable-build-iso-anaconda-webui.yml` workflow:
 **Build Arguments:**
 - `image-ref` - Full container image reference (e.g., `ghcr.io/ublue-os/aurora:stable`)
 - `flatpaks-list` - Path to dynamically generated flatpak list file
-- `hook-post-rootfs` - Path to ISO configuration script (`configure_iso_anaconda-webui.sh`)
+- `hook-post-rootfs` - Path to ISO configuration script (`configure_iso_anaconda.sh`)
 - `kargs` - Kernel arguments (currently NONE)
 
 **Build Matrix:**
@@ -306,7 +306,7 @@ The `reusable-build-iso-anaconda-webui.yml` workflow:
 
 ### Reusable ISO Build Workflow
 
-The `reusable-build-iso-anaconda-webui.yml` is the core workflow:
+The `reusable-build-iso-anaconda.yml` is the core workflow:
 
 **Trigger conditions:**
 - Workflow dispatch (manual builds)
@@ -360,7 +360,7 @@ on:
       - main
     paths:
       - ".github/workflows/build-iso-stable.yml"
-      - ".github/workflows/reusable-build-iso-anaconda-webui.yml"
+      - ".github/workflows/reusable-build-iso-anaconda.yml"
       - "iso_files/**"
   schedule:
     - cron: "0 2 1 * *"  # 2am UTC on 1st of month
@@ -370,7 +370,7 @@ on:
 jobs:
   build-iso-stable:
     name: Build Stable ISOs
-    uses: ./.github/workflows/reusable-build-iso-anaconda-webui.yml
+    uses: ./.github/workflows/reusable-build-iso-anaconda.yml
     secrets: inherit
 ```
 
@@ -420,11 +420,11 @@ jobs:
 ### Common Modification Patterns
 
 - **ISO branding**: Update files in `iso_files/` (images, scripts)
-- **Anaconda configuration**: Edit profile in `configure_iso_anaconda-webui.sh`
+- **Anaconda configuration**: Edit profile in `configure_iso_anaconda.sh`
 - **Flatpak lists**: Modify Brewfiles in `get-aurora-dev/common` repository (not this repo)
-- **Build workflow**: Edit `.github/workflows/reusable-build-iso-anaconda-webui.yml`
+- **Build workflow**: Edit `.github/workflows/reusable-build-iso-anaconda.yml`
 - **Partitioning scheme**: Update `default_partitioning` in Anaconda profile
-- **Live environment**: Add/remove packages in `configure_iso_anaconda-webui.sh`
+- **Live environment**: Add/remove packages in `configure_iso_anaconda.sh`
 - **WebUI configuration**: Modify Anaconda WebUI settings in configuration script
 
 ### Testing ISO Changes
