@@ -5,7 +5,7 @@ on:
       - main
     paths:
       - ".github/workflows/build-iso-stable.yml"
-      - ".github/workflows/reusable-build-iso-anaconda-webui.yml"
+      - ".github/workflows/reusable-build-iso-anaconda.yml"
       - "iso_files/**"
   schedule:
     - cron: "0 2 1 * *" # First day of each month at 2:00 AM UTC
@@ -15,5 +15,5 @@ on:
 jobs:
   build-iso-stable:
     name: Build Stable ISOs
-    uses: ./.github/workflows/reusable-build-iso-anaconda-webui.yml
+    uses: ./.github/workflows/reusable-build-iso-anaconda.yml
     secrets: inherit
