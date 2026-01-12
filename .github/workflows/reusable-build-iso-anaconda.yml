@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - ".github/workflows/reusable-build-iso-anaconda-webui.yml"
-      - "iso_files/configure_iso_anaconda-webui.sh"
+      - ".github/workflows/reusable-build-iso-anaconda.yml"
+      - "iso_files/configure_iso_anaconda.sh"
   schedule:
     - cron: "0 2 1 * *" # First day of each month at 2:00 AM UTC
 
@@ -68,7 +68,7 @@ jobs:
           image_ref="${IMAGE_REGISTRY}/${image_name}"
           KARGS="NONE"
           echo "image_ref=$image_ref" >> "${GITHUB_OUTPUT}"
-          echo "artifact_format="$image_name-${{ matrix.image_version }}-webui-$(uname -m)"" >> "${GITHUB_OUTPUT}"
+          echo "artifact_format="$image_name-${{ matrix.image_version }}-$(uname -m)"" >> "${GITHUB_OUTPUT}"
           echo "kargs=$KARGS" >> "${GITHUB_OUTPUT}"
 
       - name: Generate titanoboa-compatible file list
