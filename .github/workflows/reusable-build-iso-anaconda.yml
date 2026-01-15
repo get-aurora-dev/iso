@@ -117,12 +117,12 @@ jobs:
         env:
           RCLONE_CONFIG_R2_TYPE: s3
           RCLONE_CONFIG_R2_PROVIDER: Cloudflare
-          RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.AURORA_R2_ACCESS_KEY_ID }}
-          RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.AURORA_R2_SECRET_ACCESS_KEY }}
+          RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.AURORA_DL_TEST_R2_ACCESS_KEY_ID }}
+          RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.AURORA_DL_TEST_R2_ACCESS_KEY_SECRET }}
           RCLONE_CONFIG_R2_REGION: auto
-          RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.AURORA_R2_ENDPOINT }}
+          RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.AURORA_DL_TEST_R2_ENDPOINT }}
           SOURCE_DIR: ${{ steps.rename.outputs.output_directory }}
         run: |
           sudo apt-get update
           sudo apt-get install -y rclone
-          rclone copy "${SOURCE_DIR}" R2:aurora-dl
+          rclone copy "${SOURCE_DIR}" R2:aurora-dl-test
