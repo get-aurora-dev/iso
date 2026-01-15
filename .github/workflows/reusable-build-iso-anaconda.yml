@@ -1,5 +1,5 @@
 ---
-name: Build ISOs (Live with Webui)
+name: Build TEST ISOs
 on:
   workflow_dispatch:
   pull_request:
@@ -111,7 +111,7 @@ jobs:
           if-no-files-found: error
           path: ${{ steps.rename.outputs.output_directory }}
 
-      - name: Upload to CloudFlare
+      - name: Upload to CloudFlare test bucket
         if: contains(matrix.image_version, 'stable') && github.event_name != 'pull_request'
         shell: bash
         env:
