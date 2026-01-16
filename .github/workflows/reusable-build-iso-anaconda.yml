@@ -10,7 +10,7 @@ on:
   #  - cron: "0 2 1 * *" # First day of each month at 2:00 AM UTC
 
 env:
-  IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
+  IMAGE_REGISTRY: "ghcr.io/ublue-os"
   IMAGE_NAME: "aurora"
 
 concurrency:
@@ -40,6 +40,14 @@ jobs:
       - name: Maximize build space
         if: matrix.platform != 'arm64'
         uses: ublue-os/remove-unwanted-software@695eb75bc387dbcd9685a8e72d23439d8686cba6 # v10
+
+      - name: Maximize build space
+        uses: ublue-os/container-storage-action@911baca08baf30c8654933e9e9723cb399892140
+        continue-on-error: true
+        with:
+          target-dir: /var/lib/containers
+          mount-opts: compress-force=zstd:2
+          loopback-free: 0.9
 
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
