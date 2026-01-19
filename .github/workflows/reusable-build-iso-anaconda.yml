@@ -11,10 +11,6 @@ on:
         description: 'Upload ISOs to Cloudflare R2'
         type: boolean
         default: true
-  pull_request:
-    paths:
-      - ".github/workflows/reusable-build-iso-anaconda.yml"
-      - "iso_files/configure_iso_anaconda.sh"
 
 env:
   IMAGE_REGISTRY: "ghcr.io/ublue-os"
@@ -34,10 +30,6 @@ jobs:
         platform: [amd64]
         flavor: ["main", "nvidia-open"]
         image_version: ["stable"]
-        include:
-          - platform: amd64
-            flavor: "main"
-            image_version: stable
     permissions:
       contents: read
       packages: read

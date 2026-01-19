@@ -1,6 +1,13 @@
 ---
 name: Build Stable ISOs
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/build-iso-stable.yml"
+      - ".github/workflows/reusable-build-iso-anaconda.yml"
+      - "iso_files/**"
   workflow_dispatch:
     inputs:
       upload_artifacts:
@@ -19,3 +26,6 @@ jobs:
     name: Build Stable ISOs
     uses: ./.github/workflows/reusable-build-iso-anaconda.yml
     secrets: inherit
+    with:
+      upload_artifacts: ${{ github.event_name == 'workflow_dispatch' && inputs.upload_artifacts || false }}
+      upload_r2: ${{ github.event_name == 'workflow_dispatch' && inputs.upload_r2 || true }}
