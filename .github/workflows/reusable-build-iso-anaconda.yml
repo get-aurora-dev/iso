@@ -1,13 +1,11 @@
 ---
-name: Build TEST ISOs
+name: Reusable Build
 on:
-  workflow_dispatch:
+  workflow_call:
   pull_request:
     paths:
       - ".github/workflows/reusable-build-iso-anaconda.yml"
       - "iso_files/configure_iso_anaconda.sh"
-  #schedule:
-  #  - cron: "0 2 1 * *" # First day of each month at 2:00 AM UTC
 
 env:
   IMAGE_REGISTRY: "ghcr.io/ublue-os"
@@ -119,6 +117,14 @@ jobs:
           if-no-files-found: error
           path: ${{ steps.rename.outputs.output_directory }}
 
+      - name: Set up Homebrew
+        if: github.event_name != 'pull_request'
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Install rclone
+        if: github.event_name != 'pull_request'
+        run: brew install rclone
+
       - name: Upload to CloudFlare test bucket
         if: contains(matrix.image_version, 'stable') && github.event_name != 'pull_request'
         shell: bash
@@ -131,6 +137,4 @@ jobs:
           RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.AURORA_DL_TEST_R2_ENDPOINT }}
           SOURCE_DIR: ${{ steps.rename.outputs.output_directory }}
         run: |
-          sudo apt-get update
-          sudo apt-get install -y rclone
-          rclone copy "${SOURCE_DIR}" R2:aurora-dl-test
+          rclone copy --log-level INFO --checksum "${SOURCE_DIR}" R2:aurora-dl-test

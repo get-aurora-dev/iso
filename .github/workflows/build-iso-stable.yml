@@ -1,0 +1,12 @@
+---
+name: Build Stable ISOs
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 1 * *" # First day of each month at 2:00 AM UTC
+
+jobs:
+  build-iso-stable:
+    name: Build Stable ISOs
+    uses: ./.github/workflows/reusable-build-iso-anaconda.yml
+    secrets: inherit
