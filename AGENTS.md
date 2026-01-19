@@ -365,7 +365,7 @@ on:
       - ".github/workflows/reusable-build-iso-anaconda.yml"
       - "iso_files/**"
   schedule:
-    - cron: "15 3 * * TUE"  # 3:15am UTC on Tuesdays
+    - cron: "15 3 * * 2"  # 3:15am UTC on Tuesdays
   workflow_call:
   workflow_dispatch:
 
