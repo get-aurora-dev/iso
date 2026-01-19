@@ -1,6 +1,6 @@
 # Aurora ISO Builder
 
-[![Build ISOs](https://github.com/ublue-os/aurora-iso/actions/workflows/reusable-build-iso-anaconda-webui.yml/badge.svg)](https://github.com/ublue-os/aurora-iso/actions/workflows/reusable-build-iso-anaconda-webui.yml)
+[![Build ISOs](https://github.com/ublue-os/aurora-iso/actions/workflows/build-iso-stable.yml/badge.svg)](https://github.com/ublue-os/aurora-iso/actions/workflows/build-iso-stable.yml)
 
 This repository is dedicated to building bootable Aurora ISOs using [Titanoboa](https://github.com/ublue-os/titanoboa) and the Anaconda installer with WebUI.
 
@@ -27,7 +27,8 @@ Pre-built ISOs are available at [getaurora.dev](https://getaurora.dev).
 .
 ├── .github/
 │   └── workflows/
-│       ├── reusable-build-iso-anaconda.yml         # TEST ISO build workflow
+│       ├── build-iso-stable.yml                    # Caller workflow for stable ISOs
+│       ├── reusable-build-iso-anaconda.yml         # Reusable ISO build workflow
 │       ├── promote-iso.yml                         # ISO promotion workflow
 │       └── validate-just.yml                       # Justfile validation
 ├── iso_files/
@@ -111,7 +112,7 @@ just validate aurora stable nvidia-open
 
 ### ISO Customization
 
-The ISO is customized via `iso_files/configure_iso_anaconda-webui.sh`:
+The ISO is customized via `iso_files/configure_iso_anaconda.sh`:
 
 - Installs Anaconda WebUI installer
 - Configures Aurora-specific Anaconda profile
@@ -142,9 +143,9 @@ Secure boot is supported by default. After installation, users are prompted to e
 
 #### Triggers
 
-- **Pull Requests**: Builds ISOs for testing (uploads to GitHub artifacts)
-- **Workflow Dispatch**: Manual triggering
-- **Schedule**: First day of each month at 2:00 AM UTC (commented out)
+- **Pull Requests**: Builds ISOs for validation (no uploads)
+- **Workflow Dispatch**: Manual triggering with configurable upload options
+- **Schedule**: Weekly on Tuesdays at 03:15 AM UTC (2 hours after Aurora publishes weekly builds)
 
 #### Build Matrix
 
@@ -162,7 +163,13 @@ The workflow builds ISOs for:
 5. Generate flatpak list dynamically from Brewfiles in common repo
 6. Build ISO with Titanoboa
 7. Generate checksums
-8. Upload to GitHub artifacts (PR) or CloudFlare R2 test bucket (stable release)
+8. Upload to CloudFlare R2 test bucket (scheduled builds) or GitHub artifacts (configurable via inputs)
+
+#### Upload Behavior
+
+- **PR builds**: No uploads (validation only)
+- **Scheduled builds**: Upload to CloudFlare R2 test bucket (`aurora-dl-test`)
+- **Manual dispatch**: Configurable via `upload_artifacts` and `upload_r2` inputs
 
 ### ISO Promotion Workflow
 

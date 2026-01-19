@@ -166,23 +166,24 @@ The repository uses mandatory pre-commit validation:
 ### GitHub Actions Workflows
 
 - `build-iso-stable.yml` - Builds stable ISO images (calls reusable workflow)
-  - Triggers on: PR (when ISO files change), monthly schedule, workflow dispatch
+  - Triggers on: PR (when ISO files change), weekly schedule (Tuesdays), workflow dispatch
 - `reusable-build-iso-anaconda.yml` - Core ISO build logic with matrix strategy
   - Builds multiple flavor combinations in parallel
   - Uses Titanoboa for ISO generation
-  - Uploads to CloudFlare R2 (stable) or GitHub artifacts (PRs)
+  - Uploads to CloudFlare R2 test bucket (scheduled/manual) or GitHub artifacts (configurable)
 - `validate-just.yml` - Validates Justfile syntax
 
 **Workflow Architecture:**
 
-- Caller workflow (stable) calls reusable workflow with specific variant
+- Caller workflow (stable) calls reusable workflow with input-controlled uploads
 - Reusable workflow uses matrix strategy for parallel builds
-- Supports workflow dispatch for manual builds
-- Automatically builds on ISO configuration changes
+- Supports workflow dispatch for manual builds with configurable upload destinations
+- Automatically builds on ISO configuration changes (PR validation only, no uploads)
 - ISO builds use Titanoboa action from `ublue-os/titanoboa`
 - Configuration happens in `configure_iso_anaconda.sh`
 - Flatpaks are dynamically generated from Brewfiles in `get-aurora-dev/common` repository
-- ISOs are uploaded to CloudFlare R2 for distribution (stable releases only)
+- ISOs are uploaded to CloudFlare R2 test bucket (scheduled builds) or GitHub artifacts (optional)
+- PR builds validate configuration but do not upload ISOs
 
 ### Manual Validation Steps
 
@@ -340,10 +341,11 @@ Dynamically generates matrix based on configuration:
 ### Stable Workflow
 
 The `build-iso-stable.yml` is a caller workflow:
-- Triggers on PR (ISO file changes), schedule, workflow call, or workflow dispatch
-- Calls reusable workflow with stable-specific parameters
+- Triggers on PR (ISO file changes), weekly schedule (Tuesdays at 03:15 UTC), or workflow dispatch
+- Calls reusable workflow with input-controlled upload parameters
 - Builds both main and nvidia-open flavors for stable variant
 - Uses `secrets: inherit` to pass CloudFlare R2 credentials
+- Passes upload_artifacts and upload_r2 inputs to control upload destinations
 
 ### Standard Caller Workflow Pattern
 
@@ -363,7 +365,7 @@ on:
       - ".github/workflows/reusable-build-iso-anaconda.yml"
       - "iso_files/**"
   schedule:
-    - cron: "0 2 1 * *"  # 2am UTC on 1st of month
+    - cron: "15 3 * * TUE"  # 3:15am UTC on Tuesdays
   workflow_call:
   workflow_dispatch:
 
@@ -372,15 +374,19 @@ jobs:
     name: Build Stable ISOs
     uses: ./.github/workflows/reusable-build-iso-anaconda.yml
     secrets: inherit
+    with:
+      upload_artifacts: ${{ github.event_name == 'workflow_dispatch' && inputs.upload_artifacts || false }}
+      upload_r2: ${{ github.event_name == 'workflow_dispatch' && inputs.upload_r2 || true }}
 ```
 
 **Key Pattern Rules:**
 
 1. **NO permissions block in caller**: The reusable workflow handles all permissions internally
 2. **Use `secrets: inherit`**: Required for CloudFlare R2 upload credentials
-3. **Consistent triggers**: PR, schedule, workflow_call, workflow_dispatch
+3. **Consistent triggers**: PR, schedule, workflow_dispatch (workflow_call optional if needed by other workflows)
 4. **Single job pattern**: Each caller has exactly one job calling the reusable workflow
 5. **Path filters**: Only trigger on relevant file changes
+6. **Input passing**: Use `with:` block to pass inputs to reusable workflow for upload control
 
 ## Configuration Files
 
