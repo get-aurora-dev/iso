@@ -123,7 +123,7 @@ jobs:
 
       - name: Install rclone
         if: github.event_name != 'pull_request'
-        run: brew install rclone
+        run: /home/linuxbrew/.linuxbrew/bin/brew install rclone
 
       - name: Upload to CloudFlare test bucket
         if: contains(matrix.image_version, 'stable') && github.event_name != 'pull_request'
@@ -137,4 +137,4 @@ jobs:
           RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.AURORA_DL_TEST_R2_ENDPOINT }}
           SOURCE_DIR: ${{ steps.rename.outputs.output_directory }}
         run: |
-          rclone copy --log-level INFO --checksum "${SOURCE_DIR}" R2:aurora-dl-test
+          /home/linuxbrew/.linuxbrew/bin/rclone copy --log-level INFO --checksum "${SOURCE_DIR}" R2:aurora-dl-test
