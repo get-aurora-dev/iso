@@ -117,10 +117,6 @@ jobs:
           if-no-files-found: error
           path: ${{ steps.rename.outputs.output_directory }}
 
-      - name: Set up Homebrew
-        if: github.event_name != 'pull_request'
-        uses: Homebrew/actions/setup-homebrew@main
-
       - name: Install rclone
         if: github.event_name != 'pull_request'
         run: /home/linuxbrew/.linuxbrew/bin/brew install rclone
