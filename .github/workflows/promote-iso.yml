@@ -33,11 +33,11 @@ jobs:
       RCLONE_CONFIG_R2_PROD_ENDPOINT: ${{ secrets.AURORA_R2_ENDPOINT }}
 
     steps:
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
       - name: Install rclone
-        shell: bash
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y rclone
+        run: brew install rclone
 
       - name: List files in Test bucket
         run: |
