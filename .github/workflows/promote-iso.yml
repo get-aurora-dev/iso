@@ -1,0 +1,71 @@
+name: Promote ISOs to Production
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run in dry-run mode (preview changes without copying)'
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  promote:
+    name: Promote ISOs from Test to Production
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    # defined here, these apply to ALL steps in this job
+    env:
+      # Test Bucket Config (Source)
+      RCLONE_CONFIG_R2_TEST_TYPE: s3
+      RCLONE_CONFIG_R2_TEST_PROVIDER: Cloudflare
+      RCLONE_CONFIG_R2_TEST_ACCESS_KEY_ID: ${{ secrets.AURORA_DL_TEST_R2_ACCESS_KEY_ID }}
+      RCLONE_CONFIG_R2_TEST_SECRET_ACCESS_KEY: ${{ secrets.AURORA_DL_TEST_R2_ACCESS_KEY_SECRET }}
+      RCLONE_CONFIG_R2_TEST_REGION: auto
+      RCLONE_CONFIG_R2_TEST_ENDPOINT: ${{ secrets.AURORA_DL_TEST_R2_ENDPOINT }}
+
+      # Production Bucket Config (Destination)
+      RCLONE_CONFIG_R2_PROD_TYPE: s3
+      RCLONE_CONFIG_R2_PROD_PROVIDER: Cloudflare
+      RCLONE_CONFIG_R2_PROD_ACCESS_KEY_ID: ${{ secrets.AURORA_R2_ACCESS_KEY_ID }}
+      RCLONE_CONFIG_R2_PROD_SECRET_ACCESS_KEY: ${{ secrets.AURORA_R2_SECRET_ACCESS_KEY }}
+      RCLONE_CONFIG_R2_PROD_REGION: auto
+      RCLONE_CONFIG_R2_PROD_ENDPOINT: ${{ secrets.AURORA_R2_ENDPOINT }}
+
+    steps:
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Install rclone
+        run: brew install rclone
+
+      - name: List files in Test bucket
+        run: |
+          echo "Files in Test bucket:"
+          rclone ls R2_TEST:aurora-dl-test --include "*.iso" --include "*.iso-CHECKSUM"
+
+      - name: Promote ISOs (Dry Run)
+        if: inputs.dry_run == true
+        run: |
+          echo "Running in DRY RUN mode - no files will be copied"
+          rclone sync R2_TEST:aurora-dl-test R2_PROD:aurora-dl \
+            --include "*.iso" \
+            --include "*.iso-CHECKSUM" \
+            --dry-run \
+            --verbose
+
+      - name: Promote ISOs (Production)
+        if: inputs.dry_run == false
+        run: |
+          echo "Promoting ISOs from Test to Production"
+          rclone sync R2_TEST:aurora-dl-test R2_PROD:aurora-dl \
+            --include "*.iso" \
+            --include "*.iso-CHECKSUM" \
+            --verbose \
+            --progress
+
+      - name: Verify promotion
+        if: inputs.dry_run == false
+        run: |
+          echo "Files in Production bucket after promotion:"
+          rclone ls R2_PROD:aurora-dl --include "*.iso" --include "*.iso-CHECKSUM"

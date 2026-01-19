@@ -14,8 +14,8 @@ Aurora ISO Builder creates installation media for [Aurora](https://getaurora.dev
 - **Anaconda WebUI Installer**: Modern web-based installation experience
 - **Multiple Flavors**: Support for standard and NVIDIA Open variants
 - **Pre-configured**: Optimized BTRFS partitioning, secure boot support, flatpak integration
-- **Monthly Builds**: Automatically built ISOs on the first of each month
-- **CloudFlare Distribution**: Stable ISOs automatically uploaded for public access
+- **Test & Production Pipeline**: ISOs are built to test bucket, then promoted to production
+- **Manual Promotion**: Controlled release process with dry-run capability
 
 ## Download
 
@@ -27,10 +27,11 @@ Pre-built ISOs are available at [getaurora.dev](https://getaurora.dev).
 .
 ├── .github/
 │   └── workflows/
-│       ├── reusable-build-iso-anaconda-webui.yml  # Main ISO build workflow
+│       ├── reusable-build-iso-anaconda.yml         # TEST ISO build workflow
+│       ├── promote-iso.yml                         # ISO promotion workflow
 │       └── validate-just.yml                       # Justfile validation
 ├── iso_files/
-│   ├── configure_iso_anaconda-webui.sh            # ISO configuration script
+│   ├── configure_iso_anaconda.sh                   # ISO configuration script
 │   └── scope_installer.png                         # Installer branding
 ├── .pre-commit-config.yaml                         # Pre-commit hooks
 ├── AGENTS.md                                       # AI agent documentation
@@ -124,7 +125,7 @@ The ISO is customized via `iso_files/configure_iso_anaconda-webui.sh`:
 The custom Aurora profile includes:
 
 - **Storage**: BTRFS with zstd:1 compression
-- **Partitioning**: 
+- **Partitioning**:
   - `/` (1 GiB min, 70 GiB max)
   - `/home` (500 MiB min, 50 GiB free)
   - `/var` (BTRFS)
@@ -137,20 +138,22 @@ Secure boot is supported by default. After installation, users are prompted to e
 
 ## GitHub Actions Workflow
 
-### Triggers
+### ISO Build Workflow
+
+#### Triggers
 
 - **Pull Requests**: Builds ISOs for testing (uploads to GitHub artifacts)
 - **Workflow Dispatch**: Manual triggering
-- **Schedule**: First day of each month at 2:00 AM UTC
+- **Schedule**: First day of each month at 2:00 AM UTC (commented out)
 
-### Build Matrix
+#### Build Matrix
 
 The workflow builds ISOs for:
 - Platform: amd64
 - Flavors: main, nvidia-open
 - Version: stable
 
-### Workflow Steps
+#### Workflow Steps
 
 1. Maximize build space (removes unnecessary software)
 2. Checkout repository
@@ -159,7 +162,42 @@ The workflow builds ISOs for:
 5. Generate flatpak list dynamically from Brewfiles in common repo
 6. Build ISO with Titanoboa
 7. Generate checksums
-8. Upload to artifacts (PR) or CloudFlare R2 (stable release)
+8. Upload to GitHub artifacts (PR) or CloudFlare R2 test bucket (stable release)
+
+### ISO Promotion Workflow
+
+The promotion workflow (`promote-iso.yml`) copies ISOs from the test bucket to production.
+
+#### Triggers
+
+- **Workflow Dispatch**: Manual triggering only
+
+#### Inputs
+
+- **dry_run**: (default: `true`) Preview changes without copying files
+
+#### Workflow Steps
+
+1. Install rclone
+2. Configure test bucket (source) and production bucket (destination)
+3. List files in test bucket for verification
+4. Promote ISOs and checksums (with `rclone sync`)
+5. Verify files in production bucket (if not dry-run)
+
+#### Usage
+
+To promote ISOs to production:
+
+1. Go to Actions → Promote ISOs to Production
+2. Click "Run workflow"
+3. First run with **dry_run = true** to preview changes
+4. Review the dry-run output
+5. Run again with **dry_run = false** to execute promotion
+
+**Note**: The promotion workflow uses `rclone sync`, which will:
+- Copy new files from test to production
+- Update existing files if changed
+- Remove ISO and CHECKSUM files from production that don't exist in test (subject to the rclone include filters)
 
 ## Contributing
 
@@ -185,11 +223,11 @@ Contributions are welcome! Please follow these guidelines:
 ### Common Changes
 
 - **Branding**: Update images in `iso_files/`
-- **Anaconda config**: Edit profile in `configure_iso_anaconda-webui.sh`
+- **Anaconda config**: Edit profile in `configure_iso_anaconda.sh`
 - **Flatpak lists**: Modify Brewfiles in get-aurora-dev/common repository
 - **Partitioning**: Modify `default_partitioning` in Anaconda profile
 - **Live environment**: Add/remove packages in configuration script
-- **Workflow**: Update `.github/workflows/reusable-build-iso-anaconda-webui.yml`
+- **Workflow**: Update `.github/workflows/reusable-build-iso-anaconda.yml` or `promote-iso.yml`
 
 ## Documentation
 
