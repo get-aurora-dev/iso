@@ -24,13 +24,13 @@ jobs:
       RCLONE_CONFIG_R2_TEST_REGION: auto
       RCLONE_CONFIG_R2_TEST_ENDPOINT: ${{ secrets.AURORA_DL_TEST_R2_ENDPOINT }}
 
-      # Production Bucket Config (Destination)
+     # Production Bucket Config (Destination)
       RCLONE_CONFIG_R2_PROD_TYPE: s3
       RCLONE_CONFIG_R2_PROD_PROVIDER: Cloudflare
-      RCLONE_CONFIG_R2_PROD_ACCESS_KEY_ID: ${{ secrets.AURORA_R2_ACCESS_KEY_ID }}
-      RCLONE_CONFIG_R2_PROD_SECRET_ACCESS_KEY: ${{ secrets.AURORA_R2_SECRET_ACCESS_KEY }}
+      RCLONE_CONFIG_R2_PROD_ACCESS_KEY_ID: ${{ secrets. AURORA_DL_R2_ACCESS_KEY_ID }}
+      RCLONE_CONFIG_R2_PROD_SECRET_ACCESS_KEY: ${{ secrets.AURORA_DL_R2_ACCESS_SECRET_KEY }}
       RCLONE_CONFIG_R2_PROD_REGION: auto
-      RCLONE_CONFIG_R2_PROD_ENDPOINT: ${{ secrets.AURORA_R2_ENDPOINT }}
+      RCLONE_CONFIG_R2_PROD_ENDPOINT: ${{ secrets. AURORA_DL_R2_ENDPOINT }}
 
     steps:
       - name: Install rclone
