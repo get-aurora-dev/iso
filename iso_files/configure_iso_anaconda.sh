@@ -43,6 +43,15 @@ SPECS=(
 )
 dnf install -y "${SPECS[@]}"
 
+# Add Cockpit branding for Aurora
+# Cockpit looks for branding in /usr/share/cockpit/branding/$ID/
+# where $ID comes from /etc/os-release
+mkdir -p /usr/share/cockpit/branding/aurora
+
+# Copy branding files from iso_files directory
+cp /tmp/iso_files/logo.png /usr/share/cockpit/branding/aurora/logo.png
+cp /tmp/iso_files/favicon.ico /usr/share/cockpit/branding/aurora/favicon.ico
+
 # Anaconda Profile Detection
 
 # Aurora
