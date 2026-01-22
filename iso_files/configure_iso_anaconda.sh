@@ -49,8 +49,8 @@ dnf install -y "${SPECS[@]}"
 mkdir -p /usr/share/cockpit/branding/aurora
 
 # Copy branding files from iso_files directory
-cp /tmp/iso_files/logo.png /usr/share/cockpit/branding/aurora/logo.png
-cp /tmp/iso_files/favicon.ico /usr/share/cockpit/branding/aurora/favicon.ico
+curl --retry 3 -Lo /usr/share/cockpit/branding/aurora/logo.png.png https://raw.githubusercontent.com/get-aurora-dev/iso/refs/heads/main/iso_files/logo.png
+curl --retry 3 -Lo /usr/share/cockpit/branding/aurora/favicon.ico https://raw.githubusercontent.com/get-aurora-dev/iso/refs/heads/main/iso_files/favicon.ico
 
 # Anaconda Profile Detection
 
@@ -106,7 +106,7 @@ sed -i 's/ANACONDA_PRODUCTVERSION=.*/ANACONDA_PRODUCTVERSION=""/' /usr/{,s}bin/l
 desktop-file-edit --set-key=Icon --set-value=/usr/share/pixmaps/scope_installer.png /usr/share/applications/liveinst.desktop
 
 # Scope Fetcher, used as the icon in plasma-welcome and as the app icon itself for the installer
-curl --retry 3 -Lo /usr/share/pixmaps/scope_installer.png https://raw.githubusercontent.com/ublue-os/aurora/refs/heads/main/iso_files/scope_installer.png
+curl --retry 3 -Lo /usr/share/pixmaps/scope_installer.png https://raw.githubusercontent.com/get-aurora-dev/iso/refs/heads/main/iso_files/scope_installer.png
 
 # Interactive Kickstart
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
