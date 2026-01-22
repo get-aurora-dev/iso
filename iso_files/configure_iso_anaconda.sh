@@ -49,7 +49,7 @@ dnf install -y "${SPECS[@]}"
 mkdir -p /usr/share/cockpit/branding/aurora
 
 # Copy branding files from iso_files directory
-curl --retry 3 -Lo /usr/share/cockpit/branding/aurora/logo.png.png https://raw.githubusercontent.com/get-aurora-dev/iso/refs/heads/main/iso_files/logo.png
+curl --retry 3 -Lo /usr/share/cockpit/branding/aurora/logo.png https://raw.githubusercontent.com/get-aurora-dev/iso/refs/heads/main/iso_files/logo.png
 curl --retry 3 -Lo /usr/share/cockpit/branding/aurora/favicon.ico https://raw.githubusercontent.com/get-aurora-dev/iso/refs/heads/main/iso_files/favicon.ico
 
 # Anaconda Profile Detection
