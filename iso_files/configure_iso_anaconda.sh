@@ -39,8 +39,8 @@ SPECS=(
     "libblockdev-dm"
     "anaconda-live"
     "anaconda-webui"
-    "firefox"
 )
+
 dnf install -y "${SPECS[@]}"
 
 # Anaconda Profile Detection
@@ -73,7 +73,7 @@ default_partitioning =
     /var  (btrfs)
 
 [User Interface]
-custom_stylesheet = /usr/share/anaconda/pixmaps/fedora.css
+webui_web_engine = slitherer
 hidden_spokes =
     NetworkSpoke
     PasswordSpoke
@@ -94,8 +94,12 @@ echo "Aurora release $VERSION_ID ($VERSION_CODENAME)" >/etc/system-release
 
 sed -i 's/ANACONDA_PRODUCTVERSION=.*/ANACONDA_PRODUCTVERSION=""/' /usr/{,s}bin/liveinst || true
 
-desktop-file-edit --set-key=Icon --set-value=/usr/share/pixmaps/scope_installer.png /usr/share/applications/liveinst.desktop
-
+# Add StartupWMClass so the running window inherits the icon
+desktop-file-edit \
+    --set-key=Icon --set-value=/usr/share/pixmaps/scope_installer.png \
+    --set-key=StartupWMClass --set-value=slitherer \
+    /usr/share/applications/liveinst.desktop
+    
 # Scope Fetcher, used as the icon in plasma-welcome and as the app icon itself for the installer
 curl --retry 3 -Lo /usr/share/pixmaps/scope_installer.png https://raw.githubusercontent.com/ublue-os/aurora/refs/heads/main/iso_files/scope_installer.png
 
