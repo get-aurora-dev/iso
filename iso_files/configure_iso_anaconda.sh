@@ -101,8 +101,8 @@ desktop-file-edit \
     /usr/share/applications/liveinst.desktop
 
 git clone https://github.com/get-aurora-dev/branding /tmp/branding
-cp /tmp/branding/iso_files/usr/share/pixmaps/* /usr/share/pixmaps
-rm -rf /tmp
+cp -r /tmp/branding/iso_files/usr/share/pixmaps/* /usr/share/pixmaps
+rm -rf /tmp/branding
 
 # Interactive Kickstart
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
