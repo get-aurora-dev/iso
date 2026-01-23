@@ -99,9 +99,10 @@ desktop-file-edit \
     --set-key=Icon --set-value=/usr/share/pixmaps/scope_installer.png \
     --set-key=StartupWMClass --set-value=slitherer \
     /usr/share/applications/liveinst.desktop
-    
-# Scope Fetcher, used as the icon in plasma-welcome and as the app icon itself for the installer
-curl --retry 3 -Lo /usr/share/pixmaps/scope_installer.png https://raw.githubusercontent.com/ublue-os/aurora/refs/heads/main/iso_files/scope_installer.png
+
+git clone https://github.com/get-aurora-dev/branding /tmp/branding
+cp /tmp/branding/iso_files/usr/share/pixmaps/* /usr/share/pixmaps
+rm -rf /tmp
 
 # Interactive Kickstart
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
