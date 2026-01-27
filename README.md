@@ -21,6 +21,8 @@ Aurora ISO Builder creates installation media for [Aurora](https://getaurora.dev
 
 Pre-built ISOs are available at [getaurora.dev](https://getaurora.dev).
 
+Testing ISOs are available [here](https://docs.getaurora.dev/guides/iso-testing).
+
 ## Repository Structure
 
 ```
