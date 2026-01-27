@@ -41,7 +41,7 @@ SPECS=(
     "anaconda-webui"
 )
 
-dnf install -y "${SPECS[@]}"
+dnf install -y "${SPECS[@]}" -x fedora-logos
 
 # Anaconda Profile Detection
 
