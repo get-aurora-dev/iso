@@ -20,9 +20,7 @@ systemctl disable brew-setup.service
 systemctl disable rpm-ostreed-automatic.timer
 systemctl disable uupd.timer
 systemctl disable ublue-system-setup.service
-systemctl disable ublue-guest-user.service
 systemctl disable flatpak-preinstall.service
-systemctl --global disable ublue-flatpak-manager.service
 systemctl --global disable podman-auto-update.timer
 systemctl --global disable ublue-user-setup.service
 rm /usr/share/applications/system-update.desktop
@@ -31,6 +29,7 @@ rm /usr/share/applications/system-update.desktop
 rpm --erase --nodeps --justdb generic-logos
 dnf download fedora-logos
 rpm -i --justdb fedora-logos*.rpm
+rm -f fedora-logos*.rpm
 
 # Configure Anaconda
 
@@ -140,6 +139,9 @@ mkdir -p "$target"
 rsync -aAXUHKP /var/lib/flatpak "$target"
 %end
 EOF
+
+# cleanup our leftovers
+rm -rf /flatpak-list
 
 # Fetch the Secureboot Public Key
 curl --retry 15 -Lo /etc/sb_pubkey.der "$sbkey"
