@@ -322,14 +322,13 @@ Dynamically generates matrix based on configuration:
 - **Variants**: stable (primary), latest (when needed)
 
 **Build process:**
-1. Setup build environment (maximize disk space for amd64)
-2. Checkout repository and setup Just
-3. Validate Just syntax with `just check`
-4. Format image reference and determine kernel args
-5. Clone common repo and generate flatpak list from Brewfiles
-6. Build ISO using Titanoboa action with WebUI configuration
-7. Rename ISO and generate checksum
-8. Upload to CloudFlare R2 (stable, non-PR) or GitHub artifacts (PRs)
+1. Checkout repository and setup Just
+2. Validate Just syntax with `just check`
+3. Format image reference and determine kernel args
+4. Clone common repo and generate flatpak list from Brewfiles
+5. Build ISO using Titanoboa action with WebUI configuration
+6. Rename ISO and generate checksum
+7. Upload to CloudFlare R2 (stable, non-PR) or GitHub artifacts (PRs)
 
 **Key workflow features:**
 - Parallel builds across matrix
