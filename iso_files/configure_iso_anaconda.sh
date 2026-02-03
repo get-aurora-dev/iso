@@ -29,6 +29,7 @@ rm /usr/share/applications/system-update.desktop
 rpm --erase --nodeps --justdb generic-logos
 dnf download fedora-logos
 rpm -i --justdb fedora-logos*.rpm
+rm -f fedora-logos*.rpm
 
 # Configure Anaconda
 
@@ -138,6 +139,9 @@ mkdir -p "$target"
 rsync -aAXUHKP /var/lib/flatpak "$target"
 %end
 EOF
+
+# cleanup our leftovers
+rm -rf /flatpak-list
 
 # Fetch the Secureboot Public Key
 curl --retry 15 -Lo /etc/sb_pubkey.der "$sbkey"
