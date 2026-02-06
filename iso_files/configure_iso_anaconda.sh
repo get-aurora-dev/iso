@@ -23,7 +23,7 @@ systemctl disable ublue-system-setup.service
 systemctl disable flatpak-preinstall.service
 systemctl --global disable podman-auto-update.timer
 systemctl --global disable ublue-user-setup.service
-rm /usr/share/applications/system-update.desktop
+rm /usr/share/applications/dev.getaurora.system-update.desktop
 
 # HACK for https://bugzilla.redhat.com/show_bug.cgi?id=2433186
 rpm --erase --nodeps --justdb generic-logos
@@ -86,7 +86,7 @@ hidden_webui_pages =
 EOF
 
 # Add installer + docs + discourse to panel
-sed -i '/<entry name="launchers" type="StringList">/,/<\/entry>/ s/<default>[^<]*<\/default>/<default>preferred:\/\/browser,applications:org.gnome.Ptyxis.desktop,applications:io.github.kolunmi.Bazaar.desktop,preferred:\/\/filemanager,applications:Discourse.desktop,applications:documentation.desktop,applications:liveinst.desktop<\/default>/' /usr/share/plasma/plasmoids/org.kde.plasma.taskmanager/contents/config/main.xml
+sed -i '/<entry name="launchers" type="StringList">/,/<\/entry>/ s/<default>[^<]*<\/default>/<default>preferred:\/\/browser,applications:org.gnome.Ptyxis.desktop,applications:io.github.kolunmi.Bazaar.desktop,preferred:\/\/filemanager,applications:dev.getaurora.discussions.desktop,applications:dev.getaurora.documentation.desktop,applications:liveinst.desktop<\/default>/' /usr/share/plasma/plasmoids/org.kde.plasma.taskmanager/contents/config/main.xml
 
 # add intaller to kickoff
 sed -i '2s/$/;liveinst.desktop/' /usr/share/kde-settings/kde-profile/default/xdg/kicker-extra-favoritesrc
