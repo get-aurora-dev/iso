@@ -39,6 +39,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
+      - name: Maximize build space
+        uses: ublue-os/container-storage-action@4d41781c2d4394275fec1397a244a74ea4fbc08c
+        continue-on-error: true
+        with:
+          target-dir: /var/lib/containers
+          mount-opts: compress-force=zstd:2
+          loopback-free: 1
+
       - name: Checkout common repo
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
