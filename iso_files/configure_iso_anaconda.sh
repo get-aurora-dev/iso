@@ -23,6 +23,7 @@ systemctl disable ublue-system-setup.service
 systemctl disable flatpak-preinstall.service
 systemctl --global disable podman-auto-update.timer
 systemctl --global disable ublue-user-setup.service
+systemctl --global disable bazaar.service
 rm /usr/share/applications/system-update.desktop
 
 # HACK for https://bugzilla.redhat.com/show_bug.cgi?id=2433186
