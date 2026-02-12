@@ -25,6 +25,8 @@ systemctl --global disable podman-auto-update.timer
 systemctl --global disable ublue-user-setup.service
 rm /usr/share/applications/dev.getaurora.system-update.desktop
 
+systemctl --global disable bazaar.service
+
 # HACK for https://bugzilla.redhat.com/show_bug.cgi?id=2433186
 rpm --erase --nodeps --justdb generic-logos
 dnf download fedora-logos
@@ -99,12 +101,12 @@ sed -i 's/ANACONDA_PRODUCTVERSION=.*/ANACONDA_PRODUCTVERSION=""/' /usr/{,s}bin/l
 
 # Add StartupWMClass so the running window inherits the icon
 desktop-file-edit \
-    --set-key=Icon --set-value=/usr/share/pixmaps/scope_installer.png \
+    --set-key=Icon --set-value=/usr/share/icons/hicolor/scalable/apps/dev.getaurora.installer.svg \
     --set-key=StartupWMClass --set-value=slitherer \
     /usr/share/applications/liveinst.desktop
 
 git clone https://github.com/get-aurora-dev/branding /tmp/branding
-cp -r /tmp/branding/iso_files/usr/share/pixmaps/* /usr/share/pixmaps
+cp -r /tmp/branding/iso_files/usr/* /usr/
 rm -rf /tmp/branding
 
 # Interactive Kickstart
