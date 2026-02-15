@@ -109,6 +109,13 @@ git clone https://github.com/get-aurora-dev/branding /tmp/branding
 cp -r /tmp/branding/iso_files/usr/* /usr/
 rm -rf /tmp/branding
 
+# Firefox is still on 24.08 runtime
+# TODO: remove when it's using 25.08
+# See: https://gitlab.com/freedesktop-sdk/freedesktop-sdk/-/merge_requests/24620
+# hardware acceleration broken
+flatpak install -y runtime/org.freedesktop.Platform.ffmpeg-full//24.08
+flatpak pin --remove runtime/org.freedesktop.Platform.ffmpeg-full//24.08
+
 # Interactive Kickstart
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
 ostreecontainer --url=$IMAGE_REF:$IMAGE_TAG --transport=containers-storage --no-signature-verification
