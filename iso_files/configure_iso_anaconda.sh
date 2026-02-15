@@ -114,7 +114,6 @@ rm -rf /tmp/branding
 # See: https://gitlab.com/freedesktop-sdk/freedesktop-sdk/-/merge_requests/24620
 # hardware acceleration broken
 flatpak install -y runtime/org.freedesktop.Platform.ffmpeg-full//24.08
-flatpak pin --remove runtime/org.freedesktop.Platform.ffmpeg-full//24.08
 
 # Interactive Kickstart
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
