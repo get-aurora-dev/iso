@@ -106,6 +106,10 @@ git clone https://github.com/get-aurora-dev/branding /tmp/branding
 cp -r /tmp/branding/iso_files/usr/* /usr/
 rm -rf /tmp/branding
 
+# Users can mess with flatpaks on the live environment which will get
+# carried over to the installed system
+cp -a /var/lib/flatpak /var/lib/flatpak_original
+
 # Interactive Kickstart
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
 ostreecontainer --url=$IMAGE_REF:$IMAGE_TAG --transport=containers-storage --no-signature-verification
@@ -135,7 +139,8 @@ tee /usr/share/anaconda/post-scripts/install-flatpaks.ks <<'EOF'
 deployment="$(ostree rev-parse --repo=/mnt/sysimage/ostree/repo ostree/0/1/0)"
 target="/mnt/sysimage/ostree/deploy/default/deploy/$deployment.0/var/lib/"
 mkdir -p "$target"
-rsync -aAXUHKP /var/lib/flatpak "$target"
+rsync -aAXUHKP /var/lib/flatpak_original/ "$target/flatpak"
+sync
 %end
 EOF
 
