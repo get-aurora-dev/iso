@@ -101,13 +101,21 @@ jobs:
           (cd "${OUTPUT_DIRECTORY}" && sha256sum "${OUTPUT_NAME}.iso" | tee "${OUTPUT_NAME}.iso-CHECKSUM")
           echo "output_directory=$OUTPUT_DIRECTORY" >> "${GITHUB_OUTPUT}"
 
-      - name: Upload to Job Artifacts
+      - name: Upload ISO to Job Artifacts
         if: inputs.upload_artifacts
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
         with:
-          name: ${{ steps.image_ref.outputs.artifact_format }}
           if-no-files-found: error
-          path: ${{ steps.rename.outputs.output_directory }}
+          path: ${{ steps.rename.outputs.output_directory }}/${{ steps.image_ref.outputs.artifact_format }}.iso
+          archive: false
+
+      - name: Upload Checksum to Job Artifacts
+        if: inputs.upload_artifacts
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          if-no-files-found: error
+          path: ${{ steps.rename.outputs.output_directory }}/${{ steps.image_ref.outputs.artifact_format }}.iso-CHECKSUM
+          archive: false
 
       - name: Install rclone
         if: inputs.upload_r2
