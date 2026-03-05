@@ -106,6 +106,11 @@ git clone https://github.com/get-aurora-dev/branding /tmp/branding
 cp -r /tmp/branding/iso_files/usr/* /usr/
 rm -rf /tmp/branding
 
+tee -a /etc/xdg/kwalletrc <<EOF
+[Wallet]
+Enabled=false
+EOF
+
 # Interactive Kickstart
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
 ostreecontainer --url=$IMAGE_REF:$IMAGE_TAG --transport=containers-storage --no-signature-verification
