@@ -110,6 +110,11 @@ rm -rf /tmp/branding
 # carried over to the installed system
 cp -a /var/lib/flatpak /var/lib/flatpak_original
 
+tee -a /etc/xdg/kwalletrc <<EOF
+[Wallet]
+Enabled=false
+EOF
+
 # Interactive Kickstart
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
 ostreecontainer --url=$IMAGE_REF:$IMAGE_TAG --transport=containers-storage --no-signature-verification
