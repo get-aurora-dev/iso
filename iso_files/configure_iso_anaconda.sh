@@ -27,12 +27,6 @@ rm /usr/share/applications/dev.getaurora.system-update.desktop
 
 systemctl --global disable bazaar.service
 
-# HACK for https://bugzilla.redhat.com/show_bug.cgi?id=2433186
-rpm --erase --nodeps --justdb generic-logos
-dnf download fedora-logos
-rpm -i --justdb fedora-logos*.rpm
-rm -f fedora-logos*.rpm
-
 # Configure Anaconda
 
 # Install Anaconda WebUI
@@ -45,8 +39,6 @@ SPECS=(
 )
 
 dnf install -y "${SPECS[@]}"
-
-rpm --erase --nodeps --justdb fedora-logos
 
 # Anaconda Profile Detection
 
