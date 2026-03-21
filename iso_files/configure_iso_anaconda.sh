@@ -27,15 +27,17 @@ rm /usr/share/applications/dev.getaurora.system-update.desktop
 
 systemctl --global disable bazaar.service
 
-# HACK for https://bugzilla.redhat.com/show_bug.cgi?id=2433186
-rpm --erase --nodeps --justdb generic-logos
-dnf download fedora-logos
-rpm -i --justdb fedora-logos*.rpm
-rm -f fedora-logos*.rpm
+#TODO: Remove once F44 is on stable
+if [[ "${IMAGE_TAG}" == "stable" ]]; then
+    # HACK for https://bugzilla.redhat.com/show_bug.cgi?id=2433186
+    rpm --erase --nodeps --justdb generic-logos
+    dnf download fedora-logos
+    rpm -i --justdb fedora-logos*.rpm
+    rm -f fedora-logos*.rpm
+fi
 
 # Configure Anaconda
 
-# Install Anaconda WebUI
 SPECS=(
     "libblockdev-btrfs"
     "libblockdev-lvm"
@@ -46,13 +48,16 @@ SPECS=(
 
 dnf install -y "${SPECS[@]}"
 
-rpm --erase --nodeps --justdb fedora-logos
+#TODO: Remove once F44 is on stable
+if [[ "${IMAGE_TAG}" == "stable" ]]; then
+    rpm --erase --nodeps --justdb fedora-logos
+fi
 
 # Anaconda Profile Detection
 
 # Aurora
 tee /etc/anaconda/profile.d/aurora.conf <<'EOF'
-# Anaconda configuration file for Aurora Stable
+# Anaconda configuration file for Aurora
 
 [Profile]
 # Define the profile.
@@ -86,6 +91,11 @@ hidden_webui_pages =
     root-password
     network
 EOF
+
+if [[ "${IMAGE_TAG}" == "beta" ]]; then
+    sed -i '/hidden_spokes =/a \    UserSpoke' /etc/anaconda/profile.d/aurora.conf
+    sed -i '/hidden_webui_pages =/a \    anaconda-screen-accounts' /etc/anaconda/profile.d/aurora.conf
+fi
 
 # add intaller to kickoff
 sed -i '2s/$/;liveinst.desktop/' /usr/share/kde-settings/kde-profile/default/xdg/kicker-extra-favoritesrc
