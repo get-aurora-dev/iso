@@ -39,7 +39,10 @@ jobs:
       - name: List files in Test bucket
         run: |
           echo "Files in Test bucket:"
-          /home/linuxbrew/.linuxbrew/bin/rclone ls R2_TEST:aurora-dl-test --include "*.iso" --include "*.iso-CHECKSUM"
+          /home/linuxbrew/.linuxbrew/bin/rclone ls R2_TEST:aurora-dl-test \
+            --include "*.iso" \
+            --include "*.iso-CHECKSUM" \
+            --exclude "aurora-beta-*"
 
       - name: Promote ISOs (Dry Run)
         if: inputs.dry_run == true
@@ -48,6 +51,7 @@ jobs:
           /home/linuxbrew/.linuxbrew/bin/rclone sync R2_TEST:aurora-dl-test R2_PROD:aurora-dl \
             --include "*.iso" \
             --include "*.iso-CHECKSUM" \
+            --exclude "aurora-beta-*" \
             --dry-run \
             --verbose
 
@@ -58,6 +62,7 @@ jobs:
           /home/linuxbrew/.linuxbrew/bin/rclone sync R2_TEST:aurora-dl-test R2_PROD:aurora-dl \
             --include "*.iso" \
             --include "*.iso-CHECKSUM" \
+            --exclude "aurora-beta-*" \
             --verbose \
             --progress
 
