@@ -1,0 +1,34 @@
+---
+name: Build Beta ISOs
+on:
+  merge_group:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/build-iso-beta.yml"
+      - ".github/workflows/reusable-build-iso-anaconda.yml"
+      - "iso_files/**"
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      upload_artifacts:
+        description: 'Upload ISOs as job artifacts'
+        type: boolean
+        default: false
+      upload_r2:
+        description: 'Upload ISOs to Cloudflare R2'
+        type: boolean
+        default: true
+
+jobs:
+  build-iso-beta:
+    name: Build Beta ISOs
+    uses: ./.github/workflows/reusable-build-iso-anaconda.yml
+    secrets: inherit
+    with:
+      image_version: beta
+      # Upload artifacts on PR checks or if manually requested
+      upload_artifacts: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.upload_artifacts) }}
+      # Upload to R2 on merge_group or if manually requested
+      upload_r2: ${{ github.event_name == 'merge_group' || (github.event_name == 'workflow_dispatch' && inputs.upload_r2) }}

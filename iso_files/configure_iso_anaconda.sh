@@ -29,7 +29,6 @@ systemctl --global disable bazaar.service
 
 # Configure Anaconda
 
-# Install Anaconda WebUI
 SPECS=(
     "libblockdev-btrfs"
     "libblockdev-lvm"
@@ -44,7 +43,7 @@ dnf install -y "${SPECS[@]}"
 
 # Aurora
 tee /etc/anaconda/profile.d/aurora.conf <<'EOF'
-# Anaconda configuration file for Aurora Stable
+# Anaconda configuration file for Aurora
 
 [Profile]
 # Define the profile.
@@ -78,6 +77,11 @@ hidden_webui_pages =
     root-password
     network
 EOF
+
+if [[ "${IMAGE_TAG}" == "beta" ]]; then
+    sed -i '/hidden_spokes =/a \    UserSpoke' /etc/anaconda/profile.d/aurora.conf
+    sed -i '/hidden_webui_pages =/a \    anaconda-screen-accounts' /etc/anaconda/profile.d/aurora.conf
+fi
 
 # add intaller to kickoff
 sed -i '2s/$/;liveinst.desktop/' /usr/share/kde-settings/kde-profile/default/xdg/kicker-extra-favoritesrc
