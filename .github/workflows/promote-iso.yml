@@ -38,12 +38,12 @@ jobs:
 
       - name: List files in Test bucket
         run: |
-          echo "Files in Test bucket:"
+          echo "Files in Test bucket (including beta - beta ISOs will NOT be promoted):"
           /home/linuxbrew/.linuxbrew/bin/rclone ls R2_TEST:aurora-dl-test \
-            --filter "- *-beta-*" \
             --filter "+ *.iso" \
             --filter "+ *.iso-CHECKSUM" \
             --filter "- *"
+          echo "::notice::Beta ISOs (*-beta-*) are listed above but will be excluded from promotion."
 
       - name: Promote ISOs (Dry Run)
         if: inputs.dry_run == true
