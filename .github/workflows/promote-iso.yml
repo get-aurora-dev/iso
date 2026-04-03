@@ -40,7 +40,7 @@ jobs:
         run: |
           echo "Files in Test bucket:"
           /home/linuxbrew/.linuxbrew/bin/rclone ls R2_TEST:aurora-dl-test \
-            --filter "- aurora-beta-*" \
+            --filter "- *-beta-*" \
             --filter "+ *.iso" \
             --filter "+ *.iso-CHECKSUM" \
             --filter "- *"
@@ -50,7 +50,7 @@ jobs:
         run: |
           echo "Running in DRY RUN mode - no files will be copied"
           /home/linuxbrew/.linuxbrew/bin/rclone sync R2_TEST:aurora-dl-test R2_PROD:aurora-dl \
-            --filter "- aurora-beta-*" \
+            --filter "- *-beta-*" \
             --filter "+ *.iso" \
             --filter "+ *.iso-CHECKSUM" \
             --filter "- *" \
@@ -62,7 +62,7 @@ jobs:
         run: |
           echo "Promoting ISOs from Test to Production"
           /home/linuxbrew/.linuxbrew/bin/rclone sync R2_TEST:aurora-dl-test R2_PROD:aurora-dl \
-            --filter "- aurora-beta-*" \
+            --filter "- *-beta-*" \
             --filter "+ *.iso" \
             --filter "+ *.iso-CHECKSUM" \
             --filter "- *" \
