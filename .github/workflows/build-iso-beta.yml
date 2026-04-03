@@ -20,6 +20,8 @@ on:
         description: 'Upload ISOs to Cloudflare R2'
         type: boolean
         default: true
+  schedule:
+    - cron: "0 3 * * 3" # Push to testing bucket every week at 03:00 on Wednesdays
 
 jobs:
   build-iso-beta:
