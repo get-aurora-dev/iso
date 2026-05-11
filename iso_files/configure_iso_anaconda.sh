@@ -80,7 +80,7 @@ hidden_webui_pages =
     anaconda-screen-accounts
 EOF
 
-# add intaller to kickoff
+# add installer to kickoff
 sed -i '2s/$/;liveinst.desktop/' /usr/share/kde-settings/kde-profile/default/xdg/kicker-extra-favoritesrc
 
 # Configure
