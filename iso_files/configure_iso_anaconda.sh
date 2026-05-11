@@ -27,15 +27,6 @@ rm /usr/share/applications/dev.getaurora.system-update.desktop
 
 systemctl --global disable bazaar.service
 
-#TODO: Remove once F44 is on stable
-if [[ "${IMAGE_TAG}" == "stable" ]]; then
-    # HACK for https://bugzilla.redhat.com/show_bug.cgi?id=2433186
-    rpm --erase --nodeps --justdb generic-logos
-    dnf download fedora-logos
-    rpm -i --justdb fedora-logos*.rpm
-    rm -f fedora-logos*.rpm
-fi
-
 # Configure Anaconda
 
 SPECS=(
@@ -47,11 +38,6 @@ SPECS=(
 )
 
 dnf install -y "${SPECS[@]}"
-
-#TODO: Remove once F44 is on stable
-if [[ "${IMAGE_TAG}" == "stable" ]]; then
-    rpm --erase --nodeps --justdb fedora-logos
-fi
 
 # Anaconda Profile Detection
 
@@ -87,17 +73,14 @@ webui_web_engine = slitherer
 hidden_spokes =
     NetworkSpoke
     PasswordSpoke
+    UserSpoke
 hidden_webui_pages =
     root-password
     network
+    anaconda-screen-accounts
 EOF
 
-if [[ "${IMAGE_TAG}" == "beta" ]]; then
-    sed -i '/hidden_spokes =/a \    UserSpoke' /etc/anaconda/profile.d/aurora.conf
-    sed -i '/hidden_webui_pages =/a \    anaconda-screen-accounts' /etc/anaconda/profile.d/aurora.conf
-fi
-
-# add intaller to kickoff
+# add installer to kickoff
 sed -i '2s/$/;liveinst.desktop/' /usr/share/kde-settings/kde-profile/default/xdg/kicker-extra-favoritesrc
 
 # Configure
