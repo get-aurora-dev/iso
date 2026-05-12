@@ -20,7 +20,7 @@ on:
         type: boolean
         default: true
   schedule:
-    - cron: "0 3 * * 3" # Push to testing bucket every week at 03:00 on Wednesdays
+    - cron: "0 3 5 * *" # Push to testing bucket on the 5th day of the month at 03:00 UTC
 jobs:
   build-iso-stable:
     name: Build Stable ISOs
