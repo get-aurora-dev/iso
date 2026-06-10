@@ -1,12 +1,12 @@
 ---
-name: Build Beta ISOs
+name: Build Testing ISOs
 on:
   merge_group:
   pull_request:
     branches:
       - main
     paths:
-      - ".github/workflows/build-iso-beta.yml"
+      - ".github/workflows/build-iso-testing.yml"
       - ".github/workflows/reusable-build-iso-anaconda.yml"
       - "iso_files/**"
   workflow_call:
@@ -24,12 +24,12 @@ on:
     - cron: "0 3 * * 3" # Push to testing bucket every week at 03:00 on Wednesdays
 
 jobs:
-  build-iso-beta:
-    name: Build Beta ISOs
+  build-iso-testing:
+    name: Build Testing ISOs
     uses: ./.github/workflows/reusable-build-iso-anaconda.yml
     secrets: inherit
     with:
-      image_version: beta
+      image_version: testing
       # Upload artifacts on PR checks or if manually requested
       upload_artifacts: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.upload_artifacts) }}
       # Upload to R2 on merge_group or if manually requested

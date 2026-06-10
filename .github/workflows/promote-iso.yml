@@ -38,19 +38,19 @@ jobs:
 
       - name: List files in Test bucket
         run: |
-          echo "Files in Test bucket (including beta - beta ISOs will NOT be promoted):"
+          echo "Files in Test bucket (including testing - testing ISOs will NOT be promoted):"
           /home/linuxbrew/.linuxbrew/bin/rclone ls R2_TEST:aurora-dl-test \
             --filter "+ *.iso" \
             --filter "+ *.iso-CHECKSUM" \
             --filter "- *"
-          echo "::notice::Beta ISOs (*-beta-*) are listed above but will be excluded from promotion."
+          echo "::notice::Testing ISOs (*-testing-*) are listed above but will be excluded from promotion."
 
       - name: Promote ISOs (Dry Run)
         if: inputs.dry_run == true
         run: |
           echo "Running in DRY RUN mode - no files will be copied"
           /home/linuxbrew/.linuxbrew/bin/rclone sync R2_TEST:aurora-dl-test R2_PROD:aurora-dl \
-            --filter "- *-beta-*" \
+            --filter "- *-testing-*" \
             --filter "+ *.iso" \
             --filter "+ *.iso-CHECKSUM" \
             --filter "- *" \
@@ -62,7 +62,7 @@ jobs:
         run: |
           echo "Promoting ISOs from Test to Production"
           /home/linuxbrew/.linuxbrew/bin/rclone sync R2_TEST:aurora-dl-test R2_PROD:aurora-dl \
-            --filter "- *-beta-*" \
+            --filter "- *-testing-*" \
             --filter "+ *.iso" \
             --filter "+ *.iso-CHECKSUM" \
             --filter "- *" \

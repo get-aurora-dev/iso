@@ -12,7 +12,7 @@ on:
         type: boolean
         default: true
       image_version:
-        description: 'Image version/tag to build (e.g. stable, beta)'
+        description: 'Image version/tag to build (e.g. stable, testing)'
         type: string
         default: stable
       hook_script:
