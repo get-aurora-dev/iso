@@ -12,7 +12,6 @@ sbkey='https://github.com/ublue-os/akmods/raw/main/certs/public_key.der'
 glib-compile-schemas /usr/share/glib-2.0/schemas
 
 systemctl disable tailscaled.service
-systemctl disable bootloader-update.service
 systemctl disable brew-upgrade.timer
 systemctl disable brew-update.timer
 systemctl disable brew-setup.service
