@@ -56,43 +56,60 @@ jobs:
           repository: get-aurora-dev/common
           path: common
 
-      - name: Setup Just
-        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4
-
-      - name: Check Just Syntax
-        shell: bash
-        run: |
-          just check
-
       - name: Format image ref
         id: image_ref
         env:
           FLAVOR: ${{ matrix.flavor }}
+          IMAGE_VERSION: ${{ matrix.image_version }}
         run: |
           set -eoux pipefail
-          image_name=$(just image_name "aurora" "${{ matrix.image_version}}" "${{ matrix.flavor}}")
+          if [[ "${FLAVOR}" =~ main ]]; then
+            image_name="aurora"
+          else
+            image_name="aurora-${FLAVOR}"
+          fi
           image_ref="${IMAGE_REGISTRY}/${image_name}"
           KARGS="NONE"
           echo "image_ref=$image_ref" >> "${GITHUB_OUTPUT}"
-          echo "artifact_format="$image_name-${{ matrix.image_version }}-webui-$(uname -m)"" >> "${GITHUB_OUTPUT}"
+          echo "artifact_format=${image_name}-${IMAGE_VERSION}-webui-$(uname -m)" >> "${GITHUB_OUTPUT}"
           echo "kargs=$KARGS" >> "${GITHUB_OUTPUT}"
 
       - name: Generate titanoboa-compatible file list
         id: flatpak_list
         run: |
           set -eoux pipefail
-          FILE_LIST="$(mktemp)"
-          cat common/system_files/shared/usr/share/ublue-os/homebrew/system-flatpaks.Brewfile | grep -v '#' | grep -F -e "flatpak" | sed 's/flatpak //' | tr -d '"' | tee "${FILE_LIST}"
-          echo "file_list_path=${FILE_LIST}" | tee "${GITHUB_OUTPUT}"
+          mkdir -p iso_files
+          cat common/system_files/shared/usr/share/ublue-os/homebrew/system-flatpaks.Brewfile | grep -v '#' | grep -F -e "flatpak" | sed 's/flatpak //' | tr -d '"' | tee iso_files/flatpaks.list
+
+      - name: Pull base image
+        env:
+          IMAGE_REF: ${{ steps.image_ref.outputs.image_ref }}
+          IMAGE_VERSION: ${{ matrix.image_version }}
+        run: |
+          sudo podman pull "${IMAGE_REF}:${IMAGE_VERSION}"
+
+      - name: Build Live Container Image
+        id: build-container
+        env:
+          FLAVOR: ${{ matrix.flavor }}
+          IMAGE_VERSION: ${{ matrix.image_version }}
+          BASE_IMAGE_REF: ${{ steps.image_ref.outputs.image_ref }}
+        run: |
+          CONTAINER_IMAGE_NAME="aurora-live-${FLAVOR}:${IMAGE_VERSION}"
+          sudo podman build \
+            --cap-add sys_admin \
+            --security-opt label=disable \
+            --build-arg BASE_IMAGE=${BASE_IMAGE_REF}:${IMAGE_VERSION} \
+            --tag "${CONTAINER_IMAGE_NAME}" \
+            -f Containerfile \
+            .
+          echo "image_name=${CONTAINER_IMAGE_NAME}" >> "${GITHUB_OUTPUT}"
 
       - name: Build ISO
         id: build
-        uses: ublue-os/titanoboa@840217d97bd0bc9a52466508c54d8dda5c5ba2fd
+        uses: ublue-os/titanoboa@5c457c3d0518bd17e754be0fd98a60d29d26abb4
         with:
-          image-ref: ${{ steps.image_ref.outputs.image_ref }}:${{ matrix.image_version }}
-          flatpaks-list: ${{ steps.flatpak_list.outputs.file_list_path }}
-          hook-post-rootfs: ${{ github.workspace }}/${{ inputs.hook_script }}
-          kargs: ${{ steps.image_ref.outputs.kargs }}
+          image-ref: ${{ steps.build-container.outputs.image_name }}
 
       - name: Rename ISO
         id: rename

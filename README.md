@@ -31,14 +31,11 @@ Testing ISOs are available [here](https://docs.getaurora.dev/guides/iso-testing)
 │   └── workflows/
 │       ├── build-iso-stable.yml                    # Caller workflow for stable ISOs
 │       ├── reusable-build-iso-anaconda.yml         # Reusable ISO build workflow
-│       ├── promote-iso.yml                         # ISO promotion workflow
-│       └── validate-just.yml                       # Justfile validation
+│       └── promote-iso.yml                         # ISO promotion workflow
 ├── iso_files/
 │   ├── configure_iso_anaconda.sh                   # ISO configuration script
 │   └── scope_installer.png                         # Installer branding
 ├── .pre-commit-config.yaml                         # Pre-commit hooks
-├── AGENTS.md                                       # AI agent documentation
-├── Justfile                                        # Build automation recipes
 └── README.md                                       # This file
 ```
 
@@ -49,10 +46,6 @@ Testing ISOs are available [here](https://docs.getaurora.dev/guides/iso-testing)
 ISOs are built using GitHub Actions, but you can validate your changes locally:
 
 ```bash
-# Install Just command runner
-curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ~/.local/bin
-export PATH="$HOME/.local/bin:$PATH"
-
 # Install pre-commit
 pip install pre-commit
 pre-commit install
@@ -66,36 +59,9 @@ Before submitting changes, validate your code:
 # Check all syntax and formatting
 pre-commit run --all-files
 
-# Validate Justfile syntax
-just check
-
-# Test ISO configuration script
-just test-iso-config
-
-# Auto-fix formatting issues
-just fix
-```
-
-### Available Just Recipes
-
-```bash
-# List all available recipes
-just --list
-
-# Clean build artifacts
-just clean
-
-# Clone common repository (flatpak lists)
-just clone-common
-
-# Generate flatpak list from common repo
-just generate-flatpak-list
-
-# Get image name for specific combination
-just image_name aurora stable main
-
-# Validate image/tag/flavor combination
-just validate aurora stable nvidia-open
+# Test ISO configuration script syntax
+bash -n iso_files/configure_iso_anaconda.sh
+bash -n iso_files/build.sh
 ```
 
 ## ISO Variants
@@ -160,12 +126,11 @@ The workflow builds ISOs for:
 
 1. Maximize build space (removes unnecessary software)
 2. Checkout repository
-3. Validate Just syntax
-4. Format image reference
-5. Generate flatpak list dynamically from Brewfiles in common repo
-6. Build ISO with Titanoboa
-7. Generate checksums
-8. Upload to CloudFlare R2 test bucket (scheduled builds) or GitHub artifacts (configurable via inputs)
+3. Format image reference
+4. Generate flatpak list dynamically from Brewfiles in common repo
+5. Build ISO with Titanoboa
+6. Generate checksums
+7. Upload to CloudFlare R2 test bucket (scheduled builds) or GitHub artifacts (configurable via inputs)
 
 #### Upload Behavior
 
@@ -214,8 +179,8 @@ Contributions are welcome! Please follow these guidelines:
 
 ### Before Committing
 
-1. Run validation: `just check && pre-commit run --all-files`
-2. Test ISO script syntax: `just test-iso-config`
+1. Run validation: `pre-commit run --all-files`
+2. Test ISO script syntax: `bash -n iso_files/configure_iso_anaconda.sh && bash -n iso_files/build.sh`
 3. Use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/#specification)
 4. Keep changes minimal and focused
 
@@ -242,7 +207,6 @@ Contributions are welcome! Please follow these guidelines:
 
 - [Aurora Documentation](https://docs.getaurora.dev/)
 - [Universal Blue Docs](https://universal-blue.org/)
-- [AGENTS.md](AGENTS.md) - Comprehensive guide for AI-assisted development
 - [Titanoboa](https://github.com/ublue-os/titanoboa) - ISO builder tool
 
 ## Resources
