@@ -24,17 +24,12 @@ This project follows the [Universal Blue Code of Conduct](https://universal-blue
 Before you begin, ensure you have the following tools installed:
 
 - **Git**: Version control
-- **Just**: Command runner for automation
 - **Pre-commit**: For running validation hooks
 - **Bash**: For running scripts
 
 ### Installation
 
 ```bash
-# Install Just command runner
-curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ~/.local/bin
-export PATH="$HOME/.local/bin:$PATH"
-
 # Install pre-commit
 pip install pre-commit
 
@@ -125,14 +120,9 @@ Always validate your changes before committing:
 # Run all pre-commit hooks
 pre-commit run --all-files
 
-# Validate Just syntax
-just check
-
 # Test ISO configuration script syntax
-just test-iso-config
-
-# Auto-fix formatting issues
-just fix
+bash -n iso_files/configure_iso_anaconda.sh
+bash -n iso_files/build.sh
 ```
 
 ### ISO Build Testing
@@ -151,9 +141,6 @@ To manually test the ISO configuration script:
 ```bash
 # Validate bash syntax
 bash -n iso_files/configure_iso_anaconda-webui.sh
-
-# Or use the Just recipe
-just test-iso-config
 ```
 
 ## Submitting Changes
@@ -169,8 +156,8 @@ just test-iso-config
 2. **Run validation**:
    ```bash
    pre-commit run --all-files
-   just check
-   just test-iso-config
+   bash -n iso_files/configure_iso_anaconda.sh
+   bash -n iso_files/build.sh
    ```
 
 3. **Test your changes**: Ensure the ISO builds successfully in GitHub Actions
@@ -189,7 +176,6 @@ just test-iso-config
    - Screenshots or logs (if relevant)
 
 3. **Wait for CI checks** to complete:
-   - Just syntax validation
    - Pre-commit hooks
    - ISO build (if workflow files changed)
 
@@ -210,7 +196,6 @@ Brief description of what this PR does.
 - [ ] Maintenance/chore
 
 ## Testing
-- [ ] Validated locally with `just check`
 - [ ] Ran pre-commit hooks
 - [ ] Tested ISO configuration script syntax
 - [ ] ISO builds successfully in GitHub Actions
@@ -253,24 +238,6 @@ fi
 - Use `---` document separator
 - Keep workflows readable with descriptive names
 
-### Justfile
-
-- Use descriptive recipe names
-- Add comments for complex recipes
-- Group related recipes with `[group('name')]`
-- Mark internal recipes with `[private]`
-- Use consistent formatting (run `just fix`)
-
-**Example:**
-```just
-# Build ISO for specific flavor
-[group('ISO')]
-build-iso flavor="main":
-    #!/usr/bin/bash
-    set -eoux pipefail
-    echo "Building ISO for {{ flavor }}"
-```
-
 ### Markdown
 
 - Use descriptive headings
@@ -283,7 +250,7 @@ build-iso flavor="main":
 ### Adding New ISO Configuration
 
 1. Edit `iso_files/configure_iso_anaconda-webui.sh`
-2. Test syntax: `just test-iso-config`
+2. Test syntax: `bash -n iso_files/configure_iso_anaconda-webui.sh`
 3. Create PR with changes
 4. Wait for ISO build to complete
 5. Test the generated ISO
@@ -302,20 +269,11 @@ build-iso flavor="main":
 3. Create PR and monitor workflow execution
 4. Ensure all checks pass
 
-### Modifying Justfile
-
-1. Edit `Justfile`
-2. Validate syntax: `just check`
-3. Test affected recipes
-4. Run `just fix` to format
-5. Create PR
-
 ## Resources
 
 ### Documentation
 - [Aurora Documentation](https://docs.getaurora.dev/)
 - [Universal Blue Docs](https://universal-blue.org/)
-- [AGENTS.md](AGENTS.md) - AI agent development guide
 - [Titanoboa](https://github.com/ublue-os/titanoboa) - ISO builder
 
 ### Community
@@ -324,7 +282,6 @@ build-iso flavor="main":
 - [Discord](https://discord.gg/universalblue)
 
 ### Tools
-- [Just Manual](https://just.systems/man/en/)
 - [Pre-commit](https://pre-commit.com/)
 - [Conventional Commits](https://www.conventionalcommits.org/)
 
@@ -333,10 +290,9 @@ build-iso flavor="main":
 If you need help:
 
 1. Check the [documentation](https://docs.getaurora.dev/)
-2. Review [AGENTS.md](AGENTS.md) for detailed instructions
-3. Search existing [issues](https://github.com/ublue-os/aurora-iso/issues)
-4. Ask in [Discourse forums](https://universal-blue.discourse.group/c/aurora/11)
-5. Join our [Discord](https://discord.gg/universalblue)
+2. Search existing [issues](https://github.com/ublue-os/aurora-iso/issues)
+3. Ask in [Discourse forums](https://universal-blue.discourse.group/c/aurora/11)
+4. Join our [Discord](https://discord.gg/universalblue)
 
 ## Recognition
 

@@ -2,10 +2,15 @@
 
 set -eoux pipefail
 
-IMAGE_INFO="$(cat /usr/share/ublue-os/image-info.json)"
-IMAGE_TAG="$(jq -c -r '."image-tag"' <<<"$IMAGE_INFO")"
-IMAGE_REF="$(jq -c -r '."image-ref"' <<<"$IMAGE_INFO")"
-IMAGE_REF="${IMAGE_REF##*://}"
+if [[ -n "${BASE_IMAGE:-}" ]]; then
+    IMAGE_REF="${BASE_IMAGE%%:*}"
+    IMAGE_TAG="${BASE_IMAGE##*:}"
+else
+    IMAGE_INFO="$(cat /usr/share/ublue-os/image-info.json)"
+    IMAGE_TAG="$(jq -c -r '."image-tag"' <<<"$IMAGE_INFO")"
+    IMAGE_REF="$(jq -c -r '."image-ref"' <<<"$IMAGE_INFO")"
+    IMAGE_REF="${IMAGE_REF##*://}"
+fi
 sbkey='https://github.com/ublue-os/akmods/raw/main/certs/public_key.der'
 
 # Configure Live Environment
@@ -24,21 +29,10 @@ rm /usr/share/applications/dev.getaurora.system-update.desktop
 
 systemctl --global disable bazaar.service
 
-# Configure Anaconda
-
-SPECS=(
-    "libblockdev-btrfs"
-    "libblockdev-lvm"
-    "libblockdev-dm"
-    "anaconda-live"
-    "anaconda-webui"
-)
-
-dnf install -y "${SPECS[@]}"
-
 # Anaconda Profile Detection
 
 # Aurora
+mkdir -p /etc/anaconda/profile.d
 tee /etc/anaconda/profile.d/aurora.conf <<'EOF'
 # Anaconda configuration file for Aurora
 
