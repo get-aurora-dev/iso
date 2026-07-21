@@ -3,9 +3,11 @@ output/
 *.iso
 *.iso-CHECKSUM
 *_build*
+.env
 
 # Cloned repositories
 common/
+titanoboa/
 
 # Temporary files
 *.log
