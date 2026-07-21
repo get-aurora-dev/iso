@@ -1,0 +1,4 @@
+- setup signing policy for runner (use from ublue-os/aurora) so we verify our image we are pulling
+- caching for flatpaks (make sure we don't install old or unused ones on the iso because of stale cache)
+- stop doing inline cat <<EOF ... when we can
+- package cache (not super important)
