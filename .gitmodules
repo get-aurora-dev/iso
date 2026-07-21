@@ -1,3 +1,6 @@
 [submodule "titanoboa"]
 	path = titanoboa
 	url = https://github.com/ublue-os/titanoboa.git
+[submodule "common"]
+	path = common
+	url = https://github.com/get-aurora-dev/common.git
