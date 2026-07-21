@@ -2,3 +2,5 @@
 - caching for flatpaks (make sure we don't install old or unused ones on the iso because of stale cache)
 - stop doing inline cat <<EOF ... when we can
 - package cache (not super important)
+- try to not break arm/multiarch related things
+- make stuff flexible/reusable so we can do parallel readymade ISOs
