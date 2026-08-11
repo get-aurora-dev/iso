@@ -27,6 +27,12 @@ systemctl --global disable podman-auto-update.timer
 systemctl --global disable ublue-user-setup.service
 rm /usr/share/applications/dev.getaurora.system-update.desktop
 
+# https://github.com/ublue-os/aurora/issues/2624
+# https://github.com/get-aurora-dev/common/pull/249
+# https://bugs.kde.org/show_bug.cgi?id=523540
+# so plasma-welcome doesn't crash with `--live-environment`
+rm /usr/share/plasma/plasma-welcome/intro-customization.desktop
+
 systemctl --global disable bazaar.service
 
 # Anaconda Profile Detection
