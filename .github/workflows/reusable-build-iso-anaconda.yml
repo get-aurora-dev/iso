@@ -31,7 +31,7 @@ concurrency:
 jobs:
   build:
     name: Build ISOs
-    runs-on: ${{ matrix.platform == 'amd64' && 'ubuntu-24.04' }}
+    runs-on: ${{ matrix.platform == 'amd64' && 'ubuntu-26.04' }}
     strategy:
       fail-fast: false
       matrix:
