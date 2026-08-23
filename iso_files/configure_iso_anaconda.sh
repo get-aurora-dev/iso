@@ -96,9 +96,27 @@ git clone https://github.com/get-aurora-dev/branding /tmp/branding
 cp -r /tmp/branding/iso_files/usr/* /usr/
 rm -rf /tmp/branding
 
-# Users can mess with flatpaks on the live environment which will get
-# carried over to the installed system
-cp -a /var/lib/flatpak /var/lib/flatpak_original
+# https://github.com/get-aurora-dev/iso/issues/72
+cat > /usr/lib/systemd/system/var-lib-flatpak.mount <<'EOF'
+[Unit]
+Description=tmpfs so only aurora flatpaks are transferred to the installed system
+Conflicts=umount.target
+
+[Mount]
+Type=overlay
+What=overlay
+Where=/var/lib/flatpak
+Options=lowerdir=/var/lib/flatpak,upperdir=/run/overlay/flatpak,workdir=/run/overlay/flatpak.work
+[Install]
+WantedBy=local-fs.target
+EOF
+
+cat > /usr/lib/tmpfiles.d/aurora-iso-flatpak.conf <<'EOF'
+d /run/overlay/flatpak 0755 - - -
+d /run/overlay/flatpak.work 0755 - - -
+EOF
+
+systemctl enable var-lib-flatpak.mount
 
 tee -a /etc/xdg/kwalletrc <<EOF
 [Wallet]
@@ -134,7 +152,8 @@ tee /usr/share/anaconda/post-scripts/install-flatpaks.ks <<'EOF'
 deployment="$(ostree rev-parse --repo=/mnt/sysimage/ostree/repo ostree/0/1/0)"
 target="/mnt/sysimage/ostree/deploy/default/deploy/$deployment.0/var/lib/"
 mkdir -p "$target"
-rsync -aAXUHKP /var/lib/flatpak_original/ "$target/flatpak"
+umount -l /var/lib/flatpak
+rsync -aAXUHKP /var/lib/flatpak "$target"
 sync
 %end
 EOF
