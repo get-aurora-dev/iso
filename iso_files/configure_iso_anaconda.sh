@@ -152,7 +152,7 @@ tee /usr/share/anaconda/post-scripts/install-flatpaks.ks <<'EOF'
 deployment="$(ostree rev-parse --repo=/mnt/sysimage/ostree/repo ostree/0/1/0)"
 target="/mnt/sysimage/ostree/deploy/default/deploy/$deployment.0/var/lib/"
 mkdir -p "$target"
-umount -l /var/lib/flatpak
+systemctl stop var-lib-flatpak.mount
 rsync -aAXUHKP /var/lib/flatpak "$target"
 sync
 %end
