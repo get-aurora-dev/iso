@@ -27,6 +27,9 @@ systemctl --global disable podman-auto-update.timer
 systemctl --global disable ublue-user-setup.service
 rm /usr/share/applications/dev.getaurora.system-update.desktop
 
+# just to be sure
+rm -f /usr/lib/systemd/system/flatpak-add-fedora-repos.service
+
 # https://github.com/ublue-os/aurora/issues/2624
 # https://github.com/get-aurora-dev/common/pull/249
 # https://bugs.kde.org/show_bug.cgi?id=523540
@@ -127,7 +130,6 @@ EOF
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
 ostreecontainer --url=$IMAGE_REF:$IMAGE_TAG --transport=containers-storage --no-signature-verification
 %include /usr/share/anaconda/post-scripts/install-configure-upgrade.ks
-%include /usr/share/anaconda/post-scripts/disable-fedora-flatpak.ks
 %include /usr/share/anaconda/post-scripts/install-flatpaks.ks
 %include /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks
 EOF
@@ -136,13 +138,6 @@ EOF
 tee /usr/share/anaconda/post-scripts/install-configure-upgrade.ks <<EOF
 %post --erroronfail
 bootc switch --mutate-in-place --enforce-container-sigpolicy --transport registry $IMAGE_REF:$IMAGE_TAG
-%end
-EOF
-
-# Disable Fedora Flatpak
-tee /usr/share/anaconda/post-scripts/disable-fedora-flatpak.ks <<'EOF'
-%post --erroronfail
-systemctl disable flatpak-add-fedora-repos.service
 %end
 EOF
 
