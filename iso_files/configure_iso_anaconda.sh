@@ -81,6 +81,15 @@ EOF
 # add installer to kickoff
 sed -i '2s/$/;liveinst.desktop/' /usr/share/kde-settings/kde-profile/default/xdg/kicker-extra-favoritesrc
 
+cat > /usr/bin/plasma-welcome <<'EOF'
+#!/usr/bin/env bash
+
+# https://github.com/ublue-os/aurora/issues/2624
+# https://bugs.kde.org/show_bug.cgi?id=523540
+# real nasty, this is the same ordering as without --pages and with --live-environment
+exec /usr/bin/plasma-welcome-original --pages Live,Welcome,SimpleByDefault,PowerfulWhenNeeded,Enjoy "$@"
+EOF
+
 # Configure
 . /etc/os-release
 echo "Aurora release $VERSION_ID ($VERSION_CODENAME)" >/etc/system-release
