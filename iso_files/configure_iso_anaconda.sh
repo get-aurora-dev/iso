@@ -36,8 +36,6 @@ rm -f /usr/lib/systemd/system/flatpak-add-fedora-repos.service
 # so plasma-welcome doesn't crash with `--live-environment`
 rm /usr/share/plasma/plasma-welcome/intro-customization.desktop
 
-systemctl --global disable bazaar.service
-
 # Anaconda Profile Detection
 
 # Aurora
