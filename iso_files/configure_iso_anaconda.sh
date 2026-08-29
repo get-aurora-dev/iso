@@ -11,34 +11,10 @@ else
     IMAGE_REF="$(jq -c -r '."image-ref"' <<<"$IMAGE_INFO")"
     IMAGE_REF="${IMAGE_REF##*://}"
 fi
-sbkey='https://github.com/ublue-os/akmods/raw/main/certs/public_key.der'
 
-# Configure Live Environment
-glib-compile-schemas /usr/share/glib-2.0/schemas
-
-systemctl disable tailscaled.service
-systemctl disable brew-upgrade.timer
-systemctl disable brew-update.timer
-systemctl disable brew-setup.service
-systemctl disable uupd.timer
-systemctl disable ublue-system-setup.service
-systemctl disable flatpak-preinstall.service
-systemctl --global disable podman-auto-update.timer
-systemctl --global disable ublue-user-setup.service
-rm /usr/share/applications/dev.getaurora.system-update.desktop
-
-# just to be sure
-rm -f /usr/lib/systemd/system/flatpak-add-fedora-repos.service
-
-# https://github.com/ublue-os/aurora/issues/2624
-# https://github.com/get-aurora-dev/common/pull/249
-# https://bugs.kde.org/show_bug.cgi?id=523540
-# so plasma-welcome doesn't crash with `--live-environment`
-rm /usr/share/plasma/plasma-welcome/intro-customization.desktop
+sed -i 's/ANACONDA_PRODUCTVERSION=.*/ANACONDA_PRODUCTVERSION=""/' /usr/{,s}bin/liveinst || true
 
 # Anaconda Profile Detection
-
-# Aurora
 mkdir -p /etc/anaconda/profile.d
 tee /etc/anaconda/profile.d/aurora.conf <<'EOF'
 # Anaconda configuration file for Aurora
@@ -78,60 +54,11 @@ hidden_webui_pages =
     anaconda-screen-accounts
 EOF
 
-# add installer to kickoff
-sed -i '2s/$/;liveinst.desktop/' /usr/share/kde-settings/kde-profile/default/xdg/kicker-extra-favoritesrc
-
-cat > /usr/bin/plasma-welcome <<'EOF'
-#!/usr/bin/env bash
-
-# https://github.com/ublue-os/aurora/issues/2624
-# https://bugs.kde.org/show_bug.cgi?id=523540
-# real nasty, this is the same ordering as without --pages and with --live-environment
-exec /usr/bin/plasma-welcome-original --pages Live,Welcome,SimpleByDefault,PowerfulWhenNeeded,Enjoy "$@"
-EOF
-
-# Configure
-. /etc/os-release
-echo "Aurora release $VERSION_ID ($VERSION_CODENAME)" >/etc/system-release
-
-sed -i 's/ANACONDA_PRODUCTVERSION=.*/ANACONDA_PRODUCTVERSION=""/' /usr/{,s}bin/liveinst || true
-
-# Add StartupWMClass so the running window inherits the icon
+# Add StartupWMClass so the running anaconda window inherits the icon
 desktop-file-edit \
     --set-key=Icon --set-value=/usr/share/icons/hicolor/scalable/apps/dev.getaurora.installer.svg \
     --set-key=StartupWMClass --set-value=slitherer \
     /usr/share/applications/liveinst.desktop
-
-git clone https://github.com/get-aurora-dev/branding /tmp/branding
-cp -r /tmp/branding/iso_files/usr/* /usr/
-rm -rf /tmp/branding
-
-# https://github.com/get-aurora-dev/iso/issues/72
-cat > /usr/lib/systemd/system/var-lib-flatpak.mount <<'EOF'
-[Unit]
-Description=tmpfs so only aurora flatpaks are transferred to the installed system
-Conflicts=umount.target
-
-[Mount]
-Type=overlay
-What=overlay
-Where=/var/lib/flatpak
-Options=lowerdir=/var/lib/flatpak,upperdir=/run/overlay/flatpak,workdir=/run/overlay/flatpak.work
-[Install]
-WantedBy=local-fs.target
-EOF
-
-cat > /usr/lib/tmpfiles.d/aurora-iso-flatpak.conf <<'EOF'
-d /run/overlay/flatpak 0755 - - -
-d /run/overlay/flatpak.work 0755 - - -
-EOF
-
-systemctl enable var-lib-flatpak.mount
-
-tee -a /etc/xdg/kwalletrc <<EOF
-[Wallet]
-Enabled=false
-EOF
 
 # Interactive Kickstart
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
@@ -160,10 +87,8 @@ sync
 %end
 EOF
 
-# cleanup our leftovers
-rm -rf /flatpak-list
-
 # Fetch the Secureboot Public Key
+sbkey='https://github.com/ublue-os/akmods/raw/main/certs/public_key.der'
 curl --retry 15 -Lo /etc/sb_pubkey.der "$sbkey"
 
 # Enroll Secureboot Key
