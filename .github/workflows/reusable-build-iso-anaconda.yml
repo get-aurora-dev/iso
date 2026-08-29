@@ -96,7 +96,7 @@ jobs:
           BASE_IMAGE_REF: ${{ steps.image_ref.outputs.image_ref }}
         run: |
           CONTAINER_IMAGE_NAME="aurora-live-${FLAVOR}:${IMAGE_VERSION}"
-          sudo podman build \
+          sudo buildah build \
             --cap-add sys_admin \
             --security-opt label=disable \
             --build-arg BASE_IMAGE=${BASE_IMAGE_REF}:${IMAGE_VERSION} \
