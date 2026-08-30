@@ -18,6 +18,8 @@ if [[ -f "$SCRIPT_DIR/flatpaks.list" ]]; then
     echo "Installing flatpaks..."
     curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo
     xargs -r flatpak install -y --noninteractive < "$SCRIPT_DIR/flatpaks.list" || true
+    # cleanup our leftovers
+    rm -rf /flatpak-list
 fi
 
 # Configure podman temporarily to write to /usr/lib/containers/storage
@@ -72,7 +74,12 @@ systemctl enable livesys.service livesys-late.service
 # Run the configure/postrootfs hook
 # We pass BASE_IMAGE so it can be used inside the script
 export BASE_IMAGE="${BASE_IMAGE:-}"
-bash "$SCRIPT_DIR/configure_iso_anaconda.sh"
+bash \
+  "$SCRIPT_DIR/undo-image.sh" \
+  "$SCRIPT_DIR/flatpak-mount-workaround.sh" \
+  "$SCRIPT_DIR/plasma-tweaks.sh" \
+  "$SCRIPT_DIR/workarounds.sh" \
+  "$SCRIPT_DIR/configure_iso_anaconda.sh"
 
 # image-builder needs gcdx64.efi / grub modules
 _arch=$(uname -m)
