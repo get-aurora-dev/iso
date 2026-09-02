@@ -75,10 +75,10 @@ systemctl enable livesys.service livesys-late.service
 # We pass BASE_IMAGE so it can be used inside the script
 export BASE_IMAGE="${BASE_IMAGE:-}"
 bash \
-  "$SCRIPT_DIR/undo-image.sh" \
-  "$SCRIPT_DIR/flatpak-mount-workaround.sh" \
-  "$SCRIPT_DIR/plasma-tweaks.sh" \
-  "$SCRIPT_DIR/workarounds.sh" \
+  "$SCRIPT_DIR/undo-image.sh" && \
+  "$SCRIPT_DIR/flatpak-mount-workaround.sh" && \
+  "$SCRIPT_DIR/plasma-tweaks.sh" && \
+  "$SCRIPT_DIR/workarounds.sh" && \
   "$SCRIPT_DIR/configure_iso_anaconda.sh"
 
 # image-builder needs gcdx64.efi / grub modules
