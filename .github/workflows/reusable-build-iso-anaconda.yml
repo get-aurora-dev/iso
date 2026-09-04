@@ -28,6 +28,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 
+permissions: {}
+
 jobs:
   build:
     name: Build ISOs
@@ -42,6 +44,8 @@ jobs:
       contents: read
       packages: read
       id-token: write
+      attestations: write
+
 
     steps:
       - name: Checkout
@@ -125,6 +129,12 @@ jobs:
           mv "${OUTPUT_PATH}" "${OUTPUT_DIRECTORY}/${OUTPUT_NAME}.iso"
           (cd "${OUTPUT_DIRECTORY}" && sha256sum "${OUTPUT_NAME}.iso" | tee "${OUTPUT_NAME}.iso-CHECKSUM")
           echo "output_directory=$OUTPUT_DIRECTORY" >> "${GITHUB_OUTPUT}"
+
+      - name: Attestation
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        if: inputs.upload_r2 || (inputs.upload_artifacts && github.event_name != 'pull_request')
+        with:
+          subject-path: ${{ steps.rename.outputs.output_directory }}/${{ steps.image_ref.outputs.artifact_format }}.iso
 
       - name: Upload ISO to Job Artifacts
         if: inputs.upload_artifacts

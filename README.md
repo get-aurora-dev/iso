@@ -1,6 +1,6 @@
 # Aurora ISO Builder
 
-[![Build ISOs](https://github.com/ublue-os/aurora-iso/actions/workflows/build-iso-stable.yml/badge.svg)](https://github.com/ublue-os/aurora-iso/actions/workflows/build-iso-stable.yml)
+[![Build ISOs](https://github.com/get-aurora-dev/iso/actions/workflows/build-iso-stable.yml/badge.svg)](https://github.com/get-aurora-dev/iso/actions/workflows/build-iso-stable.yml)
 
 This repository is dedicated to building bootable Aurora ISOs using [Titanoboa](https://github.com/ublue-os/titanoboa) and the Anaconda installer with WebUI.
 
@@ -22,6 +22,30 @@ Aurora ISO Builder creates installation media for [Aurora](https://getaurora.dev
 Pre-built ISOs are available at [getaurora.dev](https://getaurora.dev).
 
 Testing ISOs are available [here](https://docs.getaurora.dev/guides/iso-testing).
+
+## Verifying ISOs
+
+### 1. Integrity Check (Checksum)
+
+You can verify the SHA256 checksum of your downloaded ISO against the published checksum file:
+
+```bash
+sha256sum -c <iso-name>.iso-CHECKSUM
+```
+
+### 2. Provenance Attestation (GitHub Actions)
+
+All official ISOs built via GitHub Actions include signed cryptographic build provenance attestations. You can verify that the ISO was built and published directly by this repository using the [GitHub CLI (`gh`)](https://cli.github.com/):
+
+```bash
+gh attestation verify <iso-name>.iso --owner get-aurora-dev
+```
+
+Or by specifying the repository directly:
+
+```bash
+gh attestation verify <iso-name>.iso --repo get-aurora-dev/iso
+```
 
 ## Repository Structure
 
@@ -129,7 +153,7 @@ The workflow builds ISOs for:
 3. Format image reference
 4. Generate flatpak list dynamically from Brewfiles in common repo
 5. Build ISO with Titanoboa
-6. Generate checksums
+6. Generate checksums and build provenance attestations
 7. Upload to CloudFlare R2 test bucket (scheduled builds) or GitHub artifacts (configurable via inputs)
 
 #### Upload Behavior
