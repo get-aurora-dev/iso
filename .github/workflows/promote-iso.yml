@@ -63,6 +63,7 @@ jobs:
           echo "Promoting ISOs from Test to Production"
           /home/linuxbrew/.linuxbrew/bin/rclone sync R2_TEST:aurora-dl-test R2_PROD:aurora-dl \
             --filter "- *-testing-*" \
+            --filter "- *-webui-*" \
             --filter "+ *.iso" \
             --filter "+ *.iso-CHECKSUM" \
             --filter "- *" \
