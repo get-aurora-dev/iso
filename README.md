@@ -2,26 +2,17 @@
 
 [![Build ISOs](https://github.com/get-aurora-dev/iso/actions/workflows/build-iso-stable.yml/badge.svg)](https://github.com/get-aurora-dev/iso/actions/workflows/build-iso-stable.yml)
 
-This repository is dedicated to building bootable Aurora ISOs using [Titanoboa](https://github.com/ublue-os/titanoboa) and the Anaconda installer with WebUI.
-
 ## Overview
 
-Aurora ISO Builder creates installation media for [Aurora](https://getaurora.dev), a delightful KDE desktop experience built on Universal Blue. These ISOs provide a live environment with the Anaconda WebUI installer for easy installation of Aurora.
-
-### Features
-
-- **Live Environment**: Boots into a fully functional Aurora desktop
-- **Anaconda WebUI Installer**: Modern web-based installation experience
-- **Multiple Flavors**: Support for standard and NVIDIA Open variants
-- **Pre-configured**: Optimized BTRFS partitioning, secure boot support, flatpak integration
-- **Test & Production Pipeline**: ISOs are built to test bucket, then promoted to production
-- **Manual Promotion**: Controlled release process with dry-run capability
+This repo creates installation media for [Aurora](https://getaurora.dev), these ISOs provide a live environment with the Anaconda WebUI installer and [plasma-setup](https://invent.kde.org/plasma/plasma-setup) which handles user creation and other things which have to be done on first boot. These ISOs are only compatible with UEFI and will not boot on systems with a legacy bios boot implementation.
 
 ## Download
 
 Pre-built ISOs are available at [getaurora.dev](https://getaurora.dev).
 
 Testing ISOs are available [here](https://docs.getaurora.dev/guides/iso-testing).
+
+Size usually ranges from 6GB to 8GB depending on the required runtimes by the preinstalled Flatpak applications and of course the container image size itself.
 
 ## Verifying ISOs
 
@@ -30,157 +21,79 @@ Testing ISOs are available [here](https://docs.getaurora.dev/guides/iso-testing)
 You can verify the SHA256 checksum of your downloaded ISO against the published checksum file:
 
 ```bash
-sha256sum -c <iso-name>.iso-CHECKSUM
+sha256sum --check <iso-name>.iso-CHECKSUM
+```
+
+Example:
+
+```bash
+sha256sum --check aurora-stable-webui-x86_64.iso-CHECKSUM
+aurora-stable-webui-x86_64.iso: OK
 ```
 
 ### 2. Provenance Attestation (GitHub Actions)
 
-All official ISOs built via GitHub Actions include signed cryptographic build provenance attestations. You can verify that the ISO was built and published directly by this repository using the [GitHub CLI (`gh`)](https://cli.github.com/):
+All official ISOs built via GitHub Actions include signed cryptographic build provenance attestations. You can verify that the ISO was built and published directly by the Aurora team by using the [GitHub CLI (`gh`)](https://cli.github.com/):
 
 ```bash
 gh attestation verify <iso-name>.iso --owner get-aurora-dev
 ```
 
-Or by specifying the repository directly:
-
-```bash
-gh attestation verify <iso-name>.iso --repo get-aurora-dev/iso
-```
-
-## Repository Structure
+Example:
 
 ```
-.
-├── .github/
-│   └── workflows/
-│       ├── build-iso-stable.yml                    # Caller workflow for stable ISOs
-│       ├── reusable-build-iso-anaconda.yml         # Reusable ISO build workflow
-│       └── promote-iso.yml                         # ISO promotion workflow
-├── iso_files/
-│   ├── configure_iso_anaconda.sh                   # ISO configuration script
-│   └── scope_installer.png                         # Installer branding
-├── .pre-commit-config.yaml                         # Pre-commit hooks
-└── README.md                                       # This file
+gh attestation verify aurora-stable-webui-x86_64.iso --owner get-aurora-dev
+Loaded digest sha256:5738320c906bdbae6fbb87be7bc0e30cc11cc6975916a0e28da9086641513f22 for file://aurora-stable-webui-x86_64.iso
+Loaded 1 attestation from GitHub API
+
+The following policy criteria will be enforced:
+- Predicate type must match:................ https://slsa.dev/provenance/v1
+- Source Repository Owner URI must match:... https://github.com/get-aurora-dev
+- Subject Alternative Name must match regex: (?i)^https://github\.com/get-aurora-dev/
+- OIDC Issuer must match:................... https://token.actions.githubusercontent.com
+
+✓ Verification succeeded!
+
+The following 1 attestation matched the policy criteria
+
+- Attestation #1
+- Build repo:..... get-aurora-dev/iso
+- Build workflow:. .github/workflows/build-iso-stable.yml@refs/heads/gh-readonly-queue/main/pr-85-3c092658d6fa47a1702442a7fc1c614a38ede582
+- Signer repo:.... get-aurora-dev/iso
+- Signer workflow: .github/workflows/reusable-build-iso-anaconda.yml@refs/heads/gh-readonly-queue/main/pr-85-3c092658d6fa47a1702442a7fc1c614a38ede582
 ```
-
-## Building ISOs
-
-### Prerequisites
-
-ISOs are built using GitHub Actions, but you can validate your changes locally:
-
-```bash
-# Install pre-commit
-pip install pre-commit
-pre-commit install
-```
-
-### Validation
-
-Before submitting changes, validate your code:
-
-```bash
-# Check all syntax and formatting
-pre-commit run --all-files
-
-# Test ISO configuration script syntax
-bash -n iso_files/configure_iso_anaconda.sh
-bash -n iso_files/build.sh
-```
-
-## ISO Variants
 
 ### Flavors
 
 - **main**: Standard Aurora ISO with open-source drivers
 - **nvidia-open**: Aurora ISO with NVIDIA Open kernel modules
 
+There will be no ISOs for [DX images](https://docs.getaurora.dev/dx/aurora-dx-intro).
+
 ### Versions
 
-- **stable**: Latest stable Fedora release (recommended)
-- **latest**: Current Fedora release
+- **stable**: Built on top of aurora:stable images
+- **testing**: Built on top of aurora:testing images
 
-## Configuration
+See the [release stream docs](https://docs.getaurora.dev/guides/release-streams).
 
-### ISO Customization
+There will be no ISOs for `:latest` images.
 
-The ISO is customized via `iso_files/configure_iso_anaconda.sh`:
-
-- Installs Anaconda WebUI installer
-- Configures Aurora-specific Anaconda profile
-- Sets up BTRFS partitioning with zstd compression
-- Adds installer to KDE panel and kickoff menu
-- Configures secure boot key enrollment
-- Pre-installs flatpaks (dynamically generated from Brewfiles)
-
-### Anaconda Profile
-
-The custom Aurora profile includes:
-
-- **Storage**: BTRFS with zstd:1 compression
-- **Partitioning**:
-  - `/` (1 GiB min, 70 GiB max)
-  - `/home` (500 MiB min, 50 GiB free)
-  - `/var` (BTRFS)
-- **Network**: First wired connection auto-enabled
-- **Bootloader**: Fedora EFI directory, auto-hide menu
-
-### Secure Boot
+## Secure Boot
 
 Secure boot is supported by default. After installation, users are prompted to enroll the secure boot key with password: `universalblue`
 
-## GitHub Actions Workflow
+## Build Overview
 
-### ISO Build Workflow
-
-#### Triggers
-
-- **Pull Requests**: Builds ISOs for validation (no uploads)
-- **Workflow Dispatch**: Manual triggering with configurable upload options
-- **Schedule**: Weekly on Tuesdays at 03:15 AM UTC (2 hours after Aurora publishes weekly builds)
-
-#### Build Matrix
-
-The workflow builds ISOs for:
-- Platform: amd64
-- Flavors: main, nvidia-open
-- Version: stable
-
-#### Workflow Steps
-
-1. Maximize build space (removes unnecessary software)
-2. Checkout repository
-3. Format image reference
-4. Generate flatpak list dynamically from Brewfiles in common repo
-5. Build ISO with Titanoboa
-6. Generate checksums and build provenance attestations
-7. Upload to CloudFlare R2 test bucket (scheduled builds) or GitHub artifacts (configurable via inputs)
-
-#### Upload Behavior
-
-- **PR builds**: No uploads (validation only)
-- **Scheduled builds**: Upload to CloudFlare R2 test bucket (`aurora-dl-test`)
-- **Manual dispatch**: Configurable via `upload_artifacts` and `upload_r2` inputs
+1. Generate flatpak list dynamically via Brewfiles from [common repo](https://github.com/get-aurora-dev/common)
+2. Build Container Image which is a regular aurora image tailored for the live environment
+3. Generate ISO with Titanoboa which embeds a regular aurora image into the live environments container storage
+4. Generate checksums and build provenance attestations
+5. Upload to CloudFlare R2 test bucket (scheduled builds) or GitHub artifacts for PRs
 
 ### ISO Promotion Workflow
 
 The promotion workflow (`promote-iso.yml`) copies ISOs from the test bucket to production.
-
-#### Triggers
-
-- **Workflow Dispatch**: Manual triggering only
-
-#### Inputs
-
-- **dry_run**: (default: `true`) Preview changes without copying files
-
-#### Workflow Steps
-
-1. Install rclone
-2. Configure test bucket (source) and production bucket (destination)
-3. List files in test bucket for verification
-4. Promote ISOs and checksums (with `rclone sync`)
-5. Verify files in production bucket (if not dry-run)
 
 #### Usage
 
@@ -197,36 +110,6 @@ To promote ISOs to production:
 - Update existing files if changed
 - Remove ISO and CHECKSUM files from production that don't exist in test (subject to the rclone include filters)
 
-## Contributing
-
-Contributions are welcome! Please follow these guidelines:
-
-### Before Committing
-
-1. Run validation: `pre-commit run --all-files`
-2. Test ISO script syntax: `bash -n iso_files/configure_iso_anaconda.sh && bash -n iso_files/build.sh`
-3. Use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/#specification)
-4. Keep changes minimal and focused
-
-### Pull Request Process
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run validation locally
-5. Submit a pull request
-6. Wait for ISO build to complete in GitHub Actions
-7. Test the generated ISO if needed
-
-### Common Changes
-
-- **Branding**: Update images in `iso_files/`
-- **Anaconda config**: Edit profile in `configure_iso_anaconda.sh`
-- **Flatpak lists**: Modify Brewfiles in get-aurora-dev/common repository
-- **Partitioning**: Modify `default_partitioning` in Anaconda profile
-- **Live environment**: Add/remove packages in configuration script
-- **Workflow**: Update `.github/workflows/reusable-build-iso-anaconda.yml` or `promote-iso.yml`
-
 ## Documentation
 
 - [Aurora Documentation](https://docs.getaurora.dev/)
@@ -238,15 +121,10 @@ Contributions are welcome! Please follow these guidelines:
 - [Aurora Website](https://getaurora.dev)
 - [Aurora Repository](https://github.com/ublue-os/aurora)
 - [Universal Blue](https://universal-blue.org)
-- [Discussions](https://universal-blue.discourse.group/c/aurora/11)
-
-## License
-
-Apache-2.0
+- [Discussions](https://github.com/ublue-os/aurora/discussions)
 
 ## Acknowledgments
 
-- Built on [Universal Blue](https://universal-blue.org) infrastructure
-- Uses [Titanoboa](https://github.com/ublue-os/titanoboa) for ISO creation
-- Based on [Fedora Kinoite](https://fedoraproject.org/kinoite/)
-- Powered by the [ublue-os](https://github.com/ublue-os) community
+- [Titanoboa](https://github.com/ublue-os/titanoboa) for ISO creation
+- [Anaconda WebUI](https://github.com/rhinstaller/anaconda-webui) for the installer
+- [Slitherer](https://gitlab.com/VelocityLimitless/Projects/slitherer) for providing the runner used by Anaconda
