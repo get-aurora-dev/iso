@@ -8,6 +8,8 @@ on:
     paths:
       - ".github/workflows/build-iso-stable.yml"
       - ".github/workflows/reusable-build-iso-anaconda.yml"
+      - ".github/setup-runner-keys.sh"
+      - "ghcr.io-ublue-os.pub"
       - "iso_files/**"
   workflow_dispatch:
     inputs:
