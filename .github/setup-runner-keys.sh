@@ -8,7 +8,7 @@ PKI_DIR="/etc/pki/containers"
 REGISTRIES="/etc/containers/registries.d"
 
 mkdir -p "${PKI_DIR}" "${REGISTRIES}"
-cp ublue-os-key.pub "${PKI_DIR}/ghcr.io-ublue-os.pub"
+cp ghcr.io-ublue-os.pub "${PKI_DIR}/ghcr.io-ublue-os.pub"
 
 yq -n '.docker."ghcr.io/ublue-os".use-sigstore-attachments = true' | tee "${REGISTRIES}"/ublue-os.yaml
 
