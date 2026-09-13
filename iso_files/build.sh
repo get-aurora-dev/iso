@@ -105,23 +105,6 @@ fi
 rm -f /etc/localtime
 systemd-firstboot --timezone UTC
 
-# Mount a larger tmpfs to /var/tmp at boot time to avoid disk space issues
-mkdir -p /var/tmp
-cat >/etc/systemd/system/var-tmp.mount <<'EOF'
-[Unit]
-Description=Larger tmpfs for /var/tmp on live system
-
-[Mount]
-What=tmpfs
-Where=/var/tmp
-Type=tmpfs
-Options=size=50%,nr_inodes=1m,x-systemd.graceful-option=usrquota
-
-[Install]
-WantedBy=local-fs.target
-EOF
-systemctl enable var-tmp.mount
-
 # Copy in the iso config for image-builder
 mkdir -p /usr/lib/bootc-image-builder
 cp "$SCRIPT_DIR/iso.yaml" /usr/lib/bootc-image-builder/iso.yaml
