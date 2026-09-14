@@ -20,6 +20,8 @@ if [[ -f "$SCRIPT_DIR/flatpaks.list" ]]; then
     xargs -r flatpak install -y --noninteractive < "$SCRIPT_DIR/flatpaks.list" || true
     # cleanup our leftovers
     rm -rf /flatpak-list
+    # purely for debugging
+    flatpak list --columns=runtime,app
 fi
 
 # Configure podman temporarily to write to /usr/lib/containers/storage
