@@ -62,7 +62,7 @@ desktop-file-edit \
 
 # Interactive Kickstart
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
-ostreecontainer --url=$IMAGE_REF:$IMAGE_TAG --transport=containers-storage --no-signature-verification
+bootc --source-imgref=containers-storage:$IMAGE_REF:$IMAGE_TAG
 %include /usr/share/anaconda/post-scripts/install-configure-upgrade.ks
 %include /usr/share/anaconda/post-scripts/install-flatpaks.ks
 %include /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks
@@ -81,7 +81,6 @@ tee /usr/share/anaconda/post-scripts/install-flatpaks.ks <<'EOF'
 deployment="$(ostree rev-parse --repo=/mnt/sysimage/ostree/repo ostree/0/1/0)"
 target="/mnt/sysimage/ostree/deploy/default/deploy/$deployment.0/var/lib/"
 mkdir -p "$target"
-systemctl stop var-lib-flatpak.mount
 rsync -aAXUHKP /var/lib/flatpak "$target"
 sync
 %end
