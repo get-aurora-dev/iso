@@ -30,6 +30,11 @@ on:
 jobs:
   build-iso-stable:
     name: Build Stable ISOs
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
     uses: ./.github/workflows/reusable-build-iso-anaconda.yml
     secrets: inherit
     with:
