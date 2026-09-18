@@ -17,6 +17,10 @@ on:
         description: 'Upload ISOs as job artifacts'
         type: boolean
         default: false
+      upload_ghcr:
+        description: 'Upload ISOs to GitHub Container Registry (GHCR) via ORAS'
+        type: boolean
+        default: false
       upload_r2:
         description: 'Upload ISOs to Cloudflare R2'
         type: boolean
@@ -26,10 +30,17 @@ on:
 jobs:
   build-iso-stable:
     name: Build Stable ISOs
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
     uses: ./.github/workflows/reusable-build-iso-anaconda.yml
     secrets: inherit
     with:
       # Upload artifacts on PR checks or if manually requested
       upload_artifacts: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.upload_artifacts) }}
+      # Upload to GHCR on PR checks or if manually requested
+      upload_ghcr: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.upload_ghcr) }}
       # Upload to R2 on merge_group, scheduled runs, or if manually requested
       upload_r2: ${{ github.event_name == 'merge_group' || github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.upload_r2) }}
