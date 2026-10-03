@@ -62,17 +62,9 @@ desktop-file-edit \
 
 # Interactive Kickstart
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
-ostreecontainer --url=$IMAGE_REF:$IMAGE_TAG --transport=containers-storage --no-signature-verification
-%include /usr/share/anaconda/post-scripts/install-configure-upgrade.ks
+bootc --source-imgref=containers-storage:$IMAGE_REF:$IMAGE_TAG --target-imgref=registry:$IMAGE_REF:$IMAGE_TAG
 %include /usr/share/anaconda/post-scripts/install-flatpaks.ks
 %include /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks
-EOF
-
-# Signed Images
-tee /usr/share/anaconda/post-scripts/install-configure-upgrade.ks <<EOF
-%post --erroronfail
-bootc switch --mutate-in-place --enforce-container-sigpolicy --transport registry $IMAGE_REF:$IMAGE_TAG
-%end
 EOF
 
 # Install Flatpaks
