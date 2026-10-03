@@ -62,7 +62,7 @@ desktop-file-edit \
 
 # Interactive Kickstart
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
-bootc --source-imgref=containers-storage:$IMAGE_REF:$IMAGE_TAG
+bootc --source-imgref=containers-storage:$IMAGE_REF:$IMAGE_TAG --target-imgref=registry:$IMAGE_REF:$IMAGE_TAG
 %include /usr/share/anaconda/post-scripts/install-flatpaks.ks
 %include /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks
 EOF
