@@ -119,3 +119,8 @@ mokutil --timeout -1 || :
 echo -e "$ENROLLMENT_PASSWORD\n$ENROLLMENT_PASSWORD" | mokutil --import "$SECUREBOOT_KEY" || :
 %end
 EOF
+
+# debug
+ksflatten -c /usr/share/anaconda/interactive-defaults.ks
+
+ksvalidator /usr/share/anaconda/interactive-defaults.ks

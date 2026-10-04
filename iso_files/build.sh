@@ -50,7 +50,13 @@ fi
 # Clean up the temporary storage configuration so that runtime podman uses the default
 rm -f /etc/containers/storage.conf
 
-# Install required packages
+
+ANACONDA=(
+    anaconda-live
+    anaconda-webui
+    pykickstart # verify ks files
+)
+
 dnf install -y \
     dracut-live \
     livesys-scripts \
@@ -58,11 +64,10 @@ dnf install -y \
     jq \
     rsync \
     desktop-file-utils \
-    anaconda-live \
-    anaconda-webui \
     libblockdev-btrfs \
     libblockdev-lvm \
-    libblockdev-dm
+    libblockdev-dm \
+    "${ANACONDA[@]}"
 
 kernel=$(find /usr/lib/modules -maxdepth 1 -type d -printf '%P\n' | grep . | head -1)
 DRACUT_NO_XATTR=1 dracut -v --force --zstd --reproducible --no-hostonly \
