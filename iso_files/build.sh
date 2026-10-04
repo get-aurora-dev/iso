@@ -24,17 +24,6 @@ if [[ -f "$SCRIPT_DIR/flatpaks.list" ]]; then
     flatpak list --columns=runtime,app
 fi
 
-# Configure podman temporarily to write to /usr/lib/containers/storage
-# This avoids storing the huge base image in /var/lib/containers/storage
-# (which is empty/tmpfs in the booted live environment and would exhaust RAM)
-mkdir -p /etc/containers
-cat >/etc/containers/storage.conf <<'EOF'
-[storage]
-driver = "overlay"
-runroot = "/run/containers/storage"
-graphroot = "/usr/lib/containers/storage"
-EOF
-
 # Pull the container image to be installed
 if [[ -n "${BASE_IMAGE:-}" ]]; then
     podman pull "${BASE_IMAGE}"
@@ -46,10 +35,6 @@ else
     IMAGE_REF="${IMAGE_REF##*://}"
     podman pull "${IMAGE_REF}:${IMAGE_TAG}"
 fi
-
-# Clean up the temporary storage configuration so that runtime podman uses the default
-rm -f /etc/containers/storage.conf
-
 
 ANACONDA=(
     anaconda-live
