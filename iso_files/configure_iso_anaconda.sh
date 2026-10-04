@@ -87,17 +87,13 @@ sync
 %end
 EOF
 
-# Fetch the Secureboot Public Key
-sbkey='https://github.com/ublue-os/akmods/raw/main/certs/public_key.der'
-curl --retry 15 -Lo /etc/sb_pubkey.der "$sbkey"
-
 # Enroll Secureboot Key
 tee /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks <<'EOF'
 %post --erroronfail --nochroot
 set -oue pipefail
 
 readonly ENROLLMENT_PASSWORD="universalblue"
-readonly SECUREBOOT_KEY="/etc/sb_pubkey.der"
+readonly SECUREBOOT_KEY="/etc/pki/akmods/certs/akmods-ublue.der"
 
 if [[ ! -d "/sys/firmware/efi" ]]; then
     echo "EFI mode not detected. Skipping key enrollment."

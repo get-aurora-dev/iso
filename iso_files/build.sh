@@ -81,7 +81,8 @@ bash \
   "$SCRIPT_DIR/flatpak-mount-workaround.sh" && \
   "$SCRIPT_DIR/plasma-tweaks.sh" && \
   "$SCRIPT_DIR/workarounds.sh" && \
-  "$SCRIPT_DIR/configure_iso_anaconda.sh"
+  "$SCRIPT_DIR/configure_iso_anaconda.sh" && \
+  "$SCRIPT_DIR/smoke-tests.sh"
 
 # image-builder needs gcdx64.efi / grub modules
 _arch=$(uname -m)
