@@ -42,6 +42,7 @@ default_partitioning =
     /home (min 500 MiB, free 50 GiB)
     /var  (btrfs)
 
+# we should mostly use the same values as fedora-kde
 [User Interface]
 webui_web_engine = slitherer
 hidden_spokes =
@@ -49,8 +50,8 @@ hidden_spokes =
     PasswordSpoke
     UserSpoke
 hidden_webui_pages =
-    root-password
-    network
+    anaconda-screen-date-time
+    anaconda-netowrk
     anaconda-screen-accounts
 EOF
 
