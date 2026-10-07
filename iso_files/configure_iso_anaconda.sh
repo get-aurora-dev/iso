@@ -63,30 +63,14 @@ desktop-file-edit \
 
 # Interactive Kickstart
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
-ostreecontainer --url=$IMAGE_REF:$IMAGE_TAG --transport=containers-storage --no-signature-verification
-%include /usr/share/anaconda/post-scripts/install-configure-upgrade.ks
-%include /usr/share/anaconda/post-scripts/install-flatpaks.ks
-%include /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks
+bootc --source-imgref=containers-storage:$IMAGE_REF:$IMAGE_TAG --target-imgref=$IMAGE_REF:$IMAGE_TAG
 EOF
 
-# Signed Images
-tee /usr/share/anaconda/post-scripts/install-configure-upgrade.ks <<EOF
-%post --erroronfail
-bootc switch --mutate-in-place --enforce-container-sigpolicy --transport registry $IMAGE_REF:$IMAGE_TAG
-%end
-EOF
 
-# Install Flatpaks
-tee /usr/share/anaconda/post-scripts/install-flatpaks.ks <<'EOF'
-%post --erroronfail --nochroot
-deployment="$(ostree rev-parse --repo=/mnt/sysimage/ostree/repo ostree/0/1/0)"
-target="/mnt/sysimage/ostree/deploy/default/deploy/$deployment.0/var/lib/"
-mkdir -p "$target"
-systemctl stop var-lib-flatpak.mount
-rsync -aAXUHKP /var/lib/flatpak "$target"
-sync
-%end
-EOF
+# temporary to test things
+dnf copr -y enable rhcontainerbot/bootc
+dnf swap --from-repo=copr:copr.fedorainfracloud.org:rhcontainerbot:bootc bootc bootc
+dnf copr -y disable rhcontainerbot/bootc
 
 # Enroll Secureboot Key
 tee /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks <<'EOF'
