@@ -14,6 +14,21 @@ Testing ISOs are available [here](https://docs.getaurora.dev/guides/iso-testing)
 
 Size usually ranges from 6GB to 8GB depending on the required runtimes by the preinstalled Flatpak applications and of course the container image size itself.
 
+### Downloading via ORAS (GitHub Container Registry)
+
+ISOs built in Pull Requests and CI workflows are also uploaded to GitHub Container Registry (GHCR) as OCI artifacts. You can quickly download them using [ORAS](https://oras.land/):
+
+```bash
+# Pull stable ISO
+oras pull ghcr.io/get-aurora-dev/iso/aurora:stable
+
+# Pull testing ISO with NVIDIA open drivers
+oras pull ghcr.io/get-aurora-dev/iso/aurora-nvidia-open:testing
+
+# Pull ISO from a specific Pull Request (e.g., PR #78)
+oras pull ghcr.io/get-aurora-dev/iso/aurora:pr-78-stable
+```
+
 ## Verifying ISOs
 
 ### 1. Integrity Check (Checksum)
