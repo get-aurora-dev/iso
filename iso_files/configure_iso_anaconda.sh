@@ -61,20 +61,29 @@ desktop-file-edit \
     --set-key=StartupWMClass --set-value=slitherer \
     /usr/share/applications/liveinst.desktop
 
-# Interactive Kickstart
-tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
+# F45 anaconda has bug fixes for bootc, keep f44 on ostreecontainer
+if [[ "$(rpm -E %fedora)" -le 44 ]]; then
+  # Interactive Kickstart
+  tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
 ostreecontainer --url=$IMAGE_REF:$IMAGE_TAG --transport=containers-storage --no-signature-verification
 %include /usr/share/anaconda/post-scripts/install-configure-upgrade.ks
 %include /usr/share/anaconda/post-scripts/install-flatpaks.ks
 %include /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks
 EOF
-
-# Signed Images
-tee /usr/share/anaconda/post-scripts/install-configure-upgrade.ks <<EOF
+  # Signed Images
+  tee /usr/share/anaconda/post-scripts/install-configure-upgrade.ks <<EOF
 %post --erroronfail
 bootc switch --mutate-in-place --enforce-container-sigpolicy --transport registry $IMAGE_REF:$IMAGE_TAG
 %end
 EOF
+else
+  # Interactive Kickstart
+  tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
+bootc --source-imgref=containers-storage:$IMAGE_REF:$IMAGE_TAG --target-imgref=$IMAGE_REF:$IMAGE_TAG
+%include /usr/share/anaconda/post-scripts/install-flatpaks.ks
+%include /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks
+EOF
+fi
 
 # Install Flatpaks
 tee /usr/share/anaconda/post-scripts/install-flatpaks.ks <<'EOF'
