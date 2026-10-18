@@ -82,7 +82,7 @@ else
   bootc --source-imgref=containers-storage:$IMAGE_REF:$IMAGE_TAG --target-imgref=$IMAGE_REF:$IMAGE_TAG
   %include /usr/share/anaconda/post-scripts/install-flatpaks.ks
   %include /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks
-  EOF
+EOF
 fi
 
 # Install Flatpaks
