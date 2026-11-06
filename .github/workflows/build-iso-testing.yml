@@ -35,4 +35,4 @@ jobs:
       # Upload artifacts on PR checks or if manually requested
       upload_artifacts: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.upload_artifacts) }}
       # Upload to R2 on merge_group or if manually requested
-      upload_r2: ${{ github.event_name == 'merge_group' || (github.event_name == 'workflow_dispatch' && inputs.upload_r2) }}
+      upload_r2: ${{ github.event_name == 'merge_group' || github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.upload_r2) }}
