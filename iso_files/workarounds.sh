@@ -21,3 +21,8 @@ EOF
 # https://bugs.kde.org/show_bug.cgi?id=523540
 # so plasma-welcome doesn't crash with `--live-environment`
 rm /usr/share/plasma/plasma-welcome/intro-customization.desktop
+
+
+# systemd-tmpfiles --create --boot --root=/mnt/sysroot --prefix=/var/home fails
+rm -rf /mnt
+mkdir -p -m 0755 /mnt
