@@ -66,6 +66,19 @@ tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
 bootc --source-imgref=containers-storage:$IMAGE_REF:$IMAGE_TAG --target-imgref=$IMAGE_REF:$IMAGE_TAG
 EOF
 
+# replace with bootc install mounnt here
+# Install Flatpaks
+# tee /usr/share/anaconda/post-scripts/install-flatpaks.ks <<'EOF'
+# %post --erroronfail --nochroot
+# deployment="$(ostree rev-parse --repo=/mnt/sysimage/ostree/repo ostree/0/1/0)"
+# target="/mnt/sysimage/ostree/deploy/default/deploy/$deployment.0/var/lib/"
+# mkdir -p "$target"
+# systemctl stop var-lib-flatpak.mount
+# rsync -aAXUHKP /var/lib/flatpak "$target"
+# sync
+# %end
+# EOF
+
 
 # Enroll Secureboot Key
 tee /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks <<'EOF'
