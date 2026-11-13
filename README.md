@@ -6,6 +6,19 @@
 
 This repo creates installation media for [Aurora](https://getaurora.dev), these ISOs provide a live environment with the Anaconda WebUI installer and [plasma-setup](https://invent.kde.org/plasma/plasma-setup) which handles user creation and other things which have to be done on first boot. These ISOs are only compatible with UEFI and will not boot on systems with a legacy bios boot implementation.
 
+### Built ISOs
+
+```
+aurora:stable
+aurora:testing
+aurora-nvidia-open:stable
+aurora-nvidia-open:testing
+```
+
+See the [release stream docs](https://docs.getaurora.dev/guides/release-streams) for more info.
+
+There will be no ISOs for [DX images](https://docs.getaurora.dev/dx/aurora-dx-intro) as well as `:latest` images.
+
 ## Download
 
 Pre-built ISOs are available at [getaurora.dev](https://getaurora.dev).
@@ -13,6 +26,11 @@ Pre-built ISOs are available at [getaurora.dev](https://getaurora.dev).
 Testing ISOs are available [here](https://docs.getaurora.dev/guides/iso-testing).
 
 Size usually ranges from 6GB to 8GB depending on the required runtimes by the preinstalled Flatpak applications and of course the container image size itself.
+
+All available ISOs for download are listed here as well:
+
+[Production Bucket](https://dl.getaurora.dev)
+[Testing Bucket](https://dl-test.getaurora.dev)
 
 ## Verifying ISOs
 
@@ -62,22 +80,6 @@ The following 1 attestation matched the policy criteria
 - Signer repo:.... get-aurora-dev/iso
 - Signer workflow: .github/workflows/reusable-build-iso-anaconda.yml@refs/heads/gh-readonly-queue/main/pr-85-3c092658d6fa47a1702442a7fc1c614a38ede582
 ```
-
-### Flavors
-
-- **main**: Standard Aurora ISO with open-source drivers
-- **nvidia-open**: Aurora ISO with NVIDIA Open kernel modules
-
-There will be no ISOs for [DX images](https://docs.getaurora.dev/dx/aurora-dx-intro).
-
-### Versions
-
-- **stable**: Built on top of aurora:stable images
-- **testing**: Built on top of aurora:testing images
-
-See the [release stream docs](https://docs.getaurora.dev/guides/release-streams).
-
-There will be no ISOs for `:latest` images.
 
 ## Secure Boot
 
