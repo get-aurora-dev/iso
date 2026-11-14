@@ -55,6 +55,35 @@ hidden_webui_pages =
     anaconda-screen-accounts
 EOF
 
+# fix top bar not being set
+# FIXME; why is this not falling back to fedora, also set a more sensible color scheme
+cat > /usr/share/cockpit/branding/fedora/branding.css << 'EOF'
+/* SPDX-License-Identifier: LGPL-2.1-or-later */
+
+@import "anaconda-branding.css";
+@import "anaconda-branding-compat.css";
+
+#badge {
+    inline-size: 225px;
+    block-size: 80px;
+    background-image: url("logo.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.anaconda {
+    /* Brand palette */
+    --brand-default-light: #51a2da;
+    --brand-default: #3c6eb4;
+    --brand-default-dark: #294172;
+    .logo {
+        background-image: url("logo.png");
+        filter: unset;
+    }
+
+}
+EOF
+
 # Add StartupWMClass so the running anaconda window inherits the icon
 desktop-file-edit \
     --set-key=Icon --set-value=/usr/share/icons/hicolor/scalable/apps/dev.getaurora.installer.svg \
