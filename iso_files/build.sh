@@ -16,7 +16,6 @@ mount -o remount,rw /proc/sys
 # Install flatpaks if list exists
 if [[ -f "$SCRIPT_DIR/flatpaks.list" ]]; then
     echo "Installing flatpaks..."
-    curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo
     xargs -r flatpak install -y --noninteractive < "$SCRIPT_DIR/flatpaks.list" || true
     # cleanup our leftovers
     rm -rf /flatpak-list
