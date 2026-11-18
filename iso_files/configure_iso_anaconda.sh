@@ -78,9 +78,7 @@ cat > /usr/share/cockpit/branding/fedora/branding.css << 'EOF'
     --brand-default-dark: #294172;
     .logo {
         background-image: url("logo.png");
-        filter: unset;
     }
-
 }
 EOF
 
