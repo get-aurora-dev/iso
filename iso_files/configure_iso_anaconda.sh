@@ -98,7 +98,7 @@ EOF
 # Install Flatpaks
 tee /usr/share/anaconda/post-scripts/install-flatpaks.ks <<'EOF'
 %post --erroronfail --nochroot
-deployment="$(ostree rev-parse --repo=/mnt/sysimage/ostree/repo ostree/0/1/0)"
+deployment="$(ostree rev-parse --repo=/mnt/sysimage/ostree/repo ostree/1/1/0)"
 target="/mnt/sysimage/ostree/deploy/default/deploy/$deployment.0/var/lib/"
 mkdir -p "$target"
 systemctl stop var-lib-flatpak.mount
