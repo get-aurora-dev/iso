@@ -91,6 +91,13 @@ desktop-file-edit \
 # Interactive Kickstart
 tee -a /usr/share/anaconda/interactive-defaults.ks <<EOF
 bootc --source-imgref=containers-storage:$IMAGE_REF:$IMAGE_TAG --target-imgref=$IMAGE_REF:$IMAGE_TAG
+# https://discussion.fedoraproject.org/t/root-mount-options-are-ignored-in-fedora-atomic-desktops-42-and-later/148562
+# using bootc kargs.d might be a pain later because they are added to every
+# existing installation as well which for whatever reason might not be BTRFS
+# and blow up
+# this can probably be removed with F46
+# https://bugzilla.redhat.com/show_bug.cgi?id=2332319
+bootloader --append "rootflags=compress=zstd:1"
 %include /usr/share/anaconda/post-scripts/install-flatpaks.ks
 %include /usr/share/anaconda/post-scripts/secureboot-enroll-key.ks
 EOF
