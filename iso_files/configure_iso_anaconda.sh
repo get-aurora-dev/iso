@@ -56,7 +56,7 @@ hidden_webui_pages =
 EOF
 
 # fix top bar not being set
-# FIXME; why is this not falling back to fedora, also set a more sensible color scheme
+# FIXME; why is this not falling back to fedora
 cat > /usr/share/cockpit/branding/fedora/branding.css << 'EOF'
 /* SPDX-License-Identifier: LGPL-2.1-or-later */
 
@@ -73,9 +73,9 @@ cat > /usr/share/cockpit/branding/fedora/branding.css << 'EOF'
 
 .anaconda {
     /* Brand palette */
-    --brand-default-light: #51a2da;
-    --brand-default: #3c6eb4;
-    --brand-default-dark: #294172;
+    --brand-default-light: #6c4794;
+    --brand-default: #4172be;
+    --brand-default-dark: #6c4794;
     .logo {
         background-image: url("logo.png");
     }
