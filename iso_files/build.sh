@@ -48,6 +48,7 @@ dnf install -y \
     livesys-scripts \
     git \
     jq \
+    yq \
     rsync \
     desktop-file-utils \
     libblockdev-btrfs \
@@ -87,6 +88,26 @@ fi
 mkdir -p /boot/efi
 cp -av /usr/lib/efi/*/*/EFI /boot/efi/
 
+# Copy in the iso config for image-builder
+# titanoboa uses this to generate grub.cfg
+mkdir -p /usr/lib/bootc-image-builder
+cp "$SCRIPT_DIR/iso.yaml" /usr/lib/bootc-image-builder/iso.yaml
+
+if [[ $_arch == "x86_64" ]]; then
+  dnf -y install memtest86+
+  cp -av "/usr/lib64/memtest86+/memtest86+x64.efi" /boot/efi/EFI/BOOT
+  # we don't need it
+  rm /boot/memtest86+x64.bin
+  yq -i '
+    .grub2.entries += [
+      {
+        "name": "Memory Test (memtest86+x64.efi)",
+        "linux": "/EFI/BOOT/memtest86+x64.efi"
+      }
+    ] | (.grub2.entries[].name, .grub2.entries[].linux) style="double"
+  ' /usr/lib/bootc-image-builder/iso.yaml
+fi
+
 # Remove fallback efi
 _arch=$(uname -m)
 if [[ $_arch == "x86_64" ]]; then
@@ -116,6 +137,3 @@ WantedBy=local-fs.target
 EOF
 systemctl enable var-tmp.mount
 
-# Copy in the iso config for image-builder
-mkdir -p /usr/lib/bootc-image-builder
-cp "$SCRIPT_DIR/iso.yaml" /usr/lib/bootc-image-builder/iso.yaml
