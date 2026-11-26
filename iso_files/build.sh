@@ -41,6 +41,8 @@ ANACONDA=(
     pykickstart # verify ks files
 )
 
+dnf config-manager setopt keepcache=1
+
 dnf install -y \
     dracut-live \
     livesys-scripts \
@@ -117,6 +119,3 @@ systemctl enable var-tmp.mount
 # Copy in the iso config for image-builder
 mkdir -p /usr/lib/bootc-image-builder
 cp "$SCRIPT_DIR/iso.yaml" /usr/lib/bootc-image-builder/iso.yaml
-
-# Clean up dnf cache to save space
-dnf clean all
