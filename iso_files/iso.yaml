@@ -2,9 +2,9 @@ label: "Aurora-Live"
 grub2:
   timeout: 10
   entries:
-    - name: "Aurora Live ISO"
+    - name: "Try or Install Aurora"
       linux: "/images/pxeboot/vmlinuz quiet rhgb root=live:CDLABEL=Aurora-Live enforcing=0 rd.live.image"
       initrd: "/images/pxeboot/initrd.img"
-    - name: "Aurora Live ISO (Safe Graphics Mode)"
+    - name: "Try or Install Aurora (Safe Graphics Mode)"
       linux: "/images/pxeboot/vmlinuz quiet rhgb root=live:CDLABEL=Aurora-Live enforcing=0 rd.live.image nomodeset"
       initrd: "/images/pxeboot/initrd.img"
