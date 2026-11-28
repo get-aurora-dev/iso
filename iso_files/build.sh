@@ -101,7 +101,7 @@ if [[ $_arch == "x86_64" ]]; then
   yq -i '
     .grub2.entries += [
       {
-        "name": "Memory Test (memtest86) (Secure Boot must be off in Firmware/BIOS Settings)",
+        "name": "Memory Test (memtest86+) (Turn off Secure Boot in BIOS/UEFI Firmware Settings)",
         "linux": "/EFI/BOOT/memtest86+x64.efi"
       }
     ] | (.grub2.entries[].name, .grub2.entries[].linux) style="double"
