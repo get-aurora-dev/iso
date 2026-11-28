@@ -114,7 +114,7 @@ jobs:
 
       - name: Build ISO
         id: build
-        uses: ublue-os/titanoboa@5c457c3d0518bd17e754be0fd98a60d29d26abb4
+        uses: ublue-os/titanoboa@cb43b4bd9a015fa70dd12a92668fb8d928128416
         with:
           image-ref: ${{ steps.build-container.outputs.image_name }}
 
