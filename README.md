@@ -5,6 +5,7 @@
 ## Overview
 
 This repo creates installation media for [Aurora](https://getaurora.dev), these ISOs provide a live environment with the Anaconda WebUI installer and [plasma-setup](https://invent.kde.org/plasma/plasma-setup) which handles user creation and other things which have to be done on first boot. These ISOs are only compatible with UEFI and will not boot on systems with a legacy bios boot implementation.
+There is a bootloader entry for [memtest86](https://memtest.org).
 
 ### Built ISOs
 
