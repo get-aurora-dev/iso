@@ -51,7 +51,7 @@ hidden_spokes =
     UserSpoke
 hidden_webui_pages =
     anaconda-screen-date-time
-    anaconda-netowrk
+    anaconda-network
     anaconda-screen-accounts
 EOF
 
